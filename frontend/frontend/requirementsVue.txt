@@ -1,0 +1,15 @@
+frontend@0.0.0 D:\projects\social-site\frontend\frontend
+├── @rushstack/eslint-patch@1.10.2
+├── @vitejs/plugin-vue-jsx@3.1.0
+├── @vitejs/plugin-vue@5.0.4
+├── @vue/eslint-config-prettier@9.0.0
+├── bootstrap@5.3.3
+├── eslint-plugin-vue@9.26.0
+├── eslint@8.57.0
+├── prettier@3.2.5
+├── vite-plugin-vue-devtools@7.1.3
+├── vite@5.2.11
+├── vue-router@4.3.2
+├── vue@3.4.27
+└── vue3-toastify@0.2.1
+

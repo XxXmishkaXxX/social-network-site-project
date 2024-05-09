@@ -1,0 +1,112 @@
+<template>
+  <div>
+    <!-- ШАПКА -->
+    <Navbar />
+    
+    <!-- КОНТЕНТ -->
+    <!--Главная страница-->
+
+      <div class="promo-block">
+                  <div class="container">
+                      <div class="margin-b-40">
+                          <h1 class="promo-block-title " style="word-spacing: 1px;"><b>Твое персональное онлайн портфолио.</b></h1>
+                      </div>
+                      <form action="registration/">
+                          <button type="submit" class="btn mt-5 btn-maslo" style="">Попробовать</button>
+                      </form>
+                  </div>
+      </div>
+      <!-- масло -->
+                <div class="block-center d-flex justify-content-center align-items-top ">
+                  <br><br><br><h1 class="chto-takoe">
+                    Что такое Yfpdfybt?</h1>
+                </div>
+
+      <!-- блок с 123 -->
+                <div class="one-center ">
+                    <div class="animated-text-center ">Делись своими работами</div>
+                </div>
+
+                <div class="two-center ">
+                    <div class="animated-text-sprava" >Находи новых знакомых</div>
+                </div>
+
+                <div class="three-center ">
+                    <div class="animated-text-sleva" >Общайся с дизайнерами </div>
+                </div>
+
+      <!-- слайдер -->
+      <div id="carouselExampleInterval" class="carousel slide car-img" data-bs-ride="carousel">
+        <div class="carousel-inner ">
+          <div class="carousel-item active" data-bs-interval="10000">
+            <img src="../assets/images/index/slider/img1.png" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item" data-bs-interval="10000">
+            <img src="../assets/images/index/slider/img2.png" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item" data-bs-interval="10000">
+            <img src="../assets/images/index/slider/img3.png" class="d-block w-100" alt="...">
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+      <!-- команда проекта -->
+      <div class="podnyal">
+
+
+        <center><h1 class="mh-5" style="font-size:100px;"><b>Команда проекта</b></h1></center>
+        <br><br><br><br>
+        <div class="container text-center">
+          <div class="row mb-5">
+            <div class="col mb-5">
+              <img src="../assets/images/index/teams/ars.svg" alt="ars">
+            </div>
+            <div class="col mb-5">
+              <img src="../assets/images/index/teams/den.svg" alt="den">
+            </div>
+            <div class="col mb-1">
+              <img src="../assets/images/index/teams/misha.svg" alt="misha">
+            </div>
+        </div>
+
+
+          <div class="row">
+            <div class="mb-5 col d-flex justify-content-center" >
+              <img src="../assets/images/index/teams/ilya.svg" alt="ilya">
+            </div>
+            <div class="mb-5 col d-flex justify-content-center">
+              <img src="../assets/images/index/teams/vanya.svg" alt="vanya">
+            </div>
+          </div>
+        </div>
+      </div>
+      <br><br><br><br>
+    
+    <!-- ПОДВАЛ -->
+    <Footer />
+  </div>
+</template>
+
+<script>
+import Navbar from '@/components/base/Navbar.vue'; // Путь к компоненту шапки
+import Footer from '@/components/base/Footer.vue'; // Путь к компоненту подвала
+
+export default {
+  components: {
+    Navbar,
+    Footer
+  }
+};
+</script>
+
+<style scoped>
+@import '../styles/style-base.css';
+
+</style>

@@ -12,18 +12,14 @@ from allauth.account.models import EmailAddress
 User = get_user_model()
 
 class IsEmailConfirmed(APIView):
-    def get(self, request, email):
-        user = request.user
-        print(user)
-        if not user.is_authenticated:
-            return Response({'detail': 'User is not authenticated.'}, status=403)
-        
-        primary_email = EmailAddress.objects.get_primary(user)
-        if not primary_email:
-            return Response({'detail': 'No primary email associated with the user.'}, status=400)
-        
-        is_confirmed = primary_email.verified
-        return Response({'is_confirmed': is_confirmed})
+    def post(self, request):
+        try:
+            email = EmailAddress.objects.get(email=request.data.get('email'))
+            if email.verified:
+                return Response({'status': True}, status=200)
+        except:
+            return Response({'status': 'error'})
+        return Response({'status': False})
 
 
 
