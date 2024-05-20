@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import timedelta
 
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -49,7 +50,10 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'dj_rest_auth.registration',
-    'users.apps.UsersConfig'
+    'cities_light',
+    'users.apps.UsersConfig',
+    'profiles.apps.ProfilesConfig',
+    
 ]
 
 
@@ -146,12 +150,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ],
 }
 
 JWT_AUTH_COOKIE = 'user-auth'
 
+TOKEN_MODEL = 'dj_rest_auth.Token'
 REST_USE_JWT = True
 
 REST_AUTH_REGISTER_SERIALIZERS = {
@@ -186,10 +191,17 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+CITIES_LIGHT_TRANSLATION_LANGUAGES = ['ru', 'kz', 'en']
+CITIES_LIGHT_INCLUDE_COUNTRIES = ['RU', 'KZ', 'US']
 
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:8000',
