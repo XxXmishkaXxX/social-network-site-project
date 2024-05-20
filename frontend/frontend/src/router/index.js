@@ -6,7 +6,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'Home',
       component: HomeView
     },
     {
@@ -18,6 +18,21 @@ const router = createRouter({
       path: '/login',
       name: 'Login',
       component: () => import('../views/Login.vue')
+    },
+    {
+      path: '/profile/create',
+      name: 'CreateProfile',
+      component: () => import('../views/CreateProfile.vue')
+    },
+    {
+      path: '/wall/:UserID',
+      name: 'Profile',
+      component: () => import('../views/Profile.vue')
+    },
+    {
+      path: '/profile/edit/:UserID',
+      name: 'UpdateProfile',
+      component: () => import('../views/UpdateProfile.vue')
     }
   ]
 })

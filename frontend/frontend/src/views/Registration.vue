@@ -35,7 +35,6 @@
   </template>
   
   <script>
-  import LoginComponent from './Login.vue'; 
   import { toast } from 'vue3-toastify';
   import 'vue3-toastify/dist/index.css';
 
@@ -57,14 +56,6 @@
     if (storedButtonState) {
       this.showCheckEmailButton = JSON.parse(storedButtonState);
       }
-    
-    const savedData = localStorage.getItem('registrationData');
-    if (savedData) {
-      const { email, password1, password2 } = JSON.parse(savedData);
-      this.email = email;
-      this.password1 = password1;
-      this.password2 = password2
-  }
     },
     methods: {
       showErrorMessage(error){
@@ -94,12 +85,6 @@
           });
 
           const responseData = await response.json();
-          localStorage.setItem('registrationData', JSON.stringify({
-            email: this.email,
-            password1: this.password1,
-            password2: this.password2
-          }))
-          console.log(responseData)
           if (responseData.detail === 'Verification e-mail sent.') {
             this.showCheckEmailButton = true;
             localStorage.setItem('showCheckEmailButton', JSON.stringify(true));
@@ -129,14 +114,11 @@
             })
           });
           const responseData = await response.json();
+
           if (responseData.status) {
               this.emailConfirmed = true;
               localStorage.removeItem('showCheckEmailButton');
-              
-              console.log(this.email, this.password1)
-              const loginResponse = await LoginComponent.methods.loginUser(this.email, this.password1);
-
-              console.log(loginResponse)
+              const loginResponse = this.loginUser(this.email, this.password1);
               
             }
           else{
@@ -151,7 +133,7 @@
 
       async loginUser(){
         try{
-        const response = await fetch('http://127.0.0.1:8000/api/users/check-email-verify/', {
+        const response = await fetch('http://127.0.0.1:8000/api/users/login/', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -166,8 +148,10 @@
           if (responseData.key){
             
             const token = responseData.key; 
+            const UserID = responseData.id;
             localStorage.setItem('token', token);
-            //сделать редирект на создание профиля
+            localStorage.setItem('UserID', id)
+            this.$router.push({name: 'CreateProfile'});
           }
         } 
           catch(error){

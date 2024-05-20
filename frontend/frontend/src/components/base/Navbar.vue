@@ -7,10 +7,10 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <div class="navbar-nav">
-            <!-- Здесь могут быть ссылки на другие страницы -->
+            <MenuHomePage />
           </div>
           <div class="navbar-nav ms-auto logo-button">
-            <!-- Здесь разместите логику для авторизации и профиля пользователя -->
+            <MenuHomePage />
           </div>
         </div>
       </div>
@@ -18,8 +18,13 @@
   </template>
   
   <script>
+
+  import MenuHomePage from './MenuHomePage.vue';
+
   export default {
-    // Логика компонента, если она необходима
+    components: {
+      MenuHomePage // Регистрация компонента Menu
+    }
   };
   </script>
   

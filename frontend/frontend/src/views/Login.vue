@@ -16,10 +16,6 @@
             <span class="helptext"><a href="#">Забыли пароль?</a></span>
           </div>
           <div class="mb-3">
-            <label for="remember">Запомнить меня:</label>
-            <input type="checkbox" v-model="remember" id="remember">
-          </div>
-          <div class="mb-3">
             <button type="submit" class="btn btn-primary mt-3">Login</button>
           </div>
         </form>
@@ -34,13 +30,14 @@
   
   import { toast } from 'vue3-toastify';
   import 'vue3-toastify/dist/index.css';
+  import router from '@/router';
+import axios from 'axios';
 
   export default {
     data() {
       return {
         email: '',
         password: '',
-        remember: false
       };
     },
     methods: {
@@ -61,16 +58,37 @@
             body: JSON.stringify({
               email: this.email,
               password: this.password,
-              remember: this.remember
             })
           });
 
           const responseData = await response.json();
           
           if (responseData.key){
-            const token = responseData.key; 
+            const token = responseData.key;
+            const UserID = responseData.id;
+            console.log(responseData)
             localStorage.setItem('token', token);
-            //сделать редирект на ленту
+            localStorage.setItem('UserID', UserID)
+
+            try {
+              const response = await axios.get(`http://127.0.0.1:8000/api/profile/${UserID}/`, {
+              headers: {
+                  Authorization: `token ${token}`
+              }
+              });
+              router.push({ name: 'Profile', params: { UserID: UserID }});
+          } catch (error) {
+
+            if (error.response.status === 404) {
+                    this.$router.push({ name: 'CreateProfile' });
+                } else {
+                    console.error(error);
+                }
+              
+          }
+
+
+            
           }
           else{
             this.showErrorMessage(responseData.non_field_errors)
