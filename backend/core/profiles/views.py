@@ -3,13 +3,13 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
-from .serializers import UserProfileSerializer
+from .serializers import UserProfileSerializer, UserProfileShortData, UserProfileWithPostsSerializer
 from cities_light.models import Country, City
 from .serializers import CountrySerializer, CitySerializer
 from .models import UserProfile
 from django.shortcuts import get_object_or_404
 from rest_framework.parsers import MultiPartParser
-
+from django.core.exceptions import ObjectDoesNotExist
 
 
 
@@ -40,10 +40,23 @@ class UserProfileCreate(APIView):
 class UserProfileView(APIView):
 
     def get(self, request, pk):
-        user_profile = get_object_or_404(UserProfile, user__id=pk)
-        
-        serializer = UserProfileSerializer(user_profile)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            user_profile = UserProfile.objects.get(user=pk)
+            serializer = UserProfileWithPostsSerializer(user_profile)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except ObjectDoesNotExist:
+            return Response({"error": "Профиль пользователя не найден"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class UserProfileShortDataView(APIView):
+    
+    def get(self, request, pk):
+        try:
+            data = UserProfile.objects.get(user=pk)
+            serializer = UserProfileShortData(data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except ObjectDoesNotExist:
+            return Response({"error": "Профиль пользователя не найден"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class UserProfileEditAPIView(APIView):

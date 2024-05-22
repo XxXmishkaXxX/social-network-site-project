@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'cities_light',
     'users.apps.UsersConfig',
     'profiles.apps.ProfilesConfig',
+    'wall.apps.WallConfig',
     
 ]
 
