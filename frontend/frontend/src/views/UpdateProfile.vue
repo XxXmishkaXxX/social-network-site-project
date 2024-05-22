@@ -71,7 +71,7 @@
                   <div class="d-none d-md-block col-md-6 align-self-center img-avatar-osnova">
                     <img src="../assets/images/editProfile/ma.jpg" alt="Изображение" class="img-fluid">
                   </div>
-                  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+                  <br><br><br><br><br><br><br><br><br><br><br><br><br>
                 </div>  
                 <div v-else-if="currentSection === 'avatar'">
                   <div class="row">
@@ -275,6 +275,8 @@
   
 
   <style scoped>
-@import '../styles/createProfile/style-profile.css';
-@import '../styles/createProfile/style-profile-v2.css';
+@import '../styles/profile/style-profile.css';
+@import '../styles/profile/style-profile-v2.css';
+@import url('../styles/bootstrap/bootstrap.css');
+@import url('../styles/style-base.css');
 </style>

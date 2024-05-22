@@ -2,6 +2,8 @@ from rest_framework import serializers
 from .models import UserProfile
 from string import punctuation
 from cities_light.models import Country, City
+from wall.models import Post
+from wall.serializers import PostSerializer
 
 class UserProfileSerializer(serializers.ModelSerializer):
     
@@ -98,6 +100,23 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'name': instance.city.name
         } if instance.city else None
         return data
+
+class UserProfileWithPostsSerializer(serializers.ModelSerializer):
+    posts = serializers.SerializerMethodField()
+
+    class Meta:
+        model = UserProfile
+        fields = '__all__'  # Adjust the fields as per your UserProfile model
+
+    def get_posts(self, obj):
+        posts = Post.objects.filter(author=obj)
+        return PostSerializer(posts, many=True).data
+
+
+class UserProfileShortData(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['pk', 'full_name', 'avatar', ]
 
 
 class CountrySerializer(serializers.ModelSerializer):

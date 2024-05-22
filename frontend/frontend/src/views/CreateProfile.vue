@@ -266,8 +266,8 @@ export default {
 </script>
 
 <style scoped>
-@import '../styles/createProfile/style-profile-v2.css';
-@import '../styles/createProfile/style-profile.css';
+@import '../styles/profile/style-profile-v2.css';
+@import '../styles/profile/style-profile.css';
 .button-container {
         display: flex;
         gap: 10px;

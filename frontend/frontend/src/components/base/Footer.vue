@@ -97,5 +97,5 @@ export default {
 </script>
 
 <style scoped>
-  /* Ваши стили для подвала */
+  @import url("../../styles/style-base.css");
 </style>

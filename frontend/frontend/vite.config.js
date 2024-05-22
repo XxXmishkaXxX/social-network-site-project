@@ -13,6 +13,11 @@ export default defineConfig({
         target: 'http://127.0.0.1:8000',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/avatars/, '/avatars')
+      },
+      '/media/post_images': {
+        target: 'http://127.0.0.1:8000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/post_images/, '/post_images')
       }
     }
   },
