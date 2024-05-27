@@ -13,51 +13,47 @@
               <img :src="userProfile.avatar" alt="avatar" class="ava-pre-img">
             </div>
             <div class="profile-info ms-7" style="max-width: 300px;">
-              <div class="full_name" style="max-width: 300px;">
+              <div class="full_name">
                 <h3>{{ userProfile.full_name }}</h3>
               </div>
               <div class="city" v-if="userProfile.city">
                 <p>Город: {{ userProfile.city.name }}</p>
               </div>
-              <br>
               <button @click="openModalProfileInfo" class="btn btn-outline-dark">Подробнее</button>
+            </div>
+            <div class="edit_profile me-4">
+              <router-link class="btn btn-primary" style="text-decoration: none; color:white;" :to="{ name: 'UpdateProfile', params: { userId: userProfile.id } }">
+                Редактировать профиль
+              </router-link>
+            </div>
+            <div class="upload_post">
+              <UploadPostModal />
+            </div>
+          </div>
 
-              <div v-if="showModalProfileInfo" class="modal">
-                <div class="modal-content">
-                  <div class="info">
-                    <span @click="closeModalProfileInfo" class="close">&times;</span>
-                    <div class="birth_date">
-                      <p>{{ userProfile.birth_date }}</p>
-                    </div>
-                    <div class="country">
-                      <p>{{ userProfile.country.name }}</p>
-                    </div>
-                    <div class="city">
-                      <p>{{ userProfile.city.name }}</p>
-                    </div>
-                    <div class="bio">
-                      <p>{{ userProfile.bio }}</p>
-                    </div>
-                  </div>
+          <div v-if="showModalProfileInfo" class="modal">
+            <div class="modal-content">
+              <div class="info">
+                <span @click="closeModalProfileInfo" class="close">&times;</span>
+                <div class="birth_date">
+                  <p>{{ userProfile.birth_date }}</p>
+                </div>
+                <div class="country">
+                  <p>{{ userProfile.country.name }}</p>
+                </div>
+                <div class="city">
+                  <p>{{ userProfile.city.name }}</p>
+                </div>
+                <div class="bio">
+                  <p>{{ userProfile.bio }}</p>
                 </div>
               </div>
-            </div>
-            <div class="profile-container d-flex align-items-center" v-if="localStorage.getItem('UserID') === this.$route.params.UserID">
-              <div class="main_info me-auto">
-                <!-- main_info content here -->
-              </div>
-              <div class="edit_profile me-4">
-                <router-link class="btn btn-primary" style="text-decoration: none; color:white;" :to="{ name: 'UpdateProfile', params: { userId: userProfile.id } }">
-                  Редактировать профиль
-                </router-link>
-              </div>
-              <UploadPostModal ref="uploadPostModal"/>
             </div>
           </div>
           <br>
           <div class="">
-            <div class="container" id="postContainer">
-              <div v-for="post in userProfile.posts" :key="post.id" class="card" :id="'post-' + post.id">
+            <div class="postContainer" id="postContainer">
+              <div v-for="post in posts" :key="post.id" class="card" :id="'post-' + post.id">
                 <p class="date"><br>&nbsp;&nbsp;&nbsp;&nbsp;Дата публикации: {{ post.created_at }}</p>
                 <p class="card-text"><br>&nbsp;&nbsp;&nbsp;&nbsp;{{ post.content }}</p>
                 <div class="container_images">
@@ -74,81 +70,46 @@
                   </div>
                 </div>
 
-                <div v-if="post.video" class="video-container">
-                  <video controls class="w-100">
-                    <source :src="post.video.url" type="video/mp4">
-                    Your browser does not support the video tag.
-                  </video>
-                </div>
-
                 <div class="d-flex align-items-center">
-                  <div class="like ms-3" id="like">
-                    <button @click="likePost(post.id)" class="btn btn-outline-danger me-2 mt-4">
-                      <b><i :id="'heart-svg-' + post.id" :class="{'bi bi-heart-fill': post.isLiked, 'bi bi-heart': !post.isLiked}"></i></b>
-                      <b :id="'likes-count-' + post.id">{{ post.likes_count }}</b>
-                    </button>
-                  </div>
 
-                  <div v-if="userProfile.user === localStorage.getItem('UserID')">
-                    <form id="deleteForm">
-                      <button type="button" class="me-2 btn btn-outline-dark" @click="deletePost(post.id)">Удалить</button>
-                    </form>
-                  </div>
-                  <div class="views mt-4">
-                    <i class="bi bi-eye"></i> <b>{{ post.views_count }} </b>
-                  </div>
+                  <LikeButton :postId="post.id" :liked="post.liked" :likesCount="post.likes_count" @update="fetchUsersPosts" />
+
+                  <DeletePostButton v-if="userProfile.user == localStorage.getItem('UserID')" :isUserPost="true" 
+                  :post-id="post.id" @post-deleted="fetchUsersPosts" />
                 </div>
                 <br>
 
                 <br>
-                Комментарии
-                 <div class="comments">
-                  <h5>Комментарии</h5>
-                  <div :id="'comments_list_' + post.id">
-                    <div v-for="comment in post.comments" :key="comment.id" class="comment d-flex align-items-center">
-                      <div class="avatar me-2">
-                        <img :src="comment.user_profile.avatar" alt="avatar-commenter" style="max-width: 50px">
-                      </div>
-                      <div class="comment-info">
-                        <div class="full_name">
-                          <p>{{ comment.user_profile.full_name }}</p>
-                        </div>
-                        <div class="comment_text">{{ comment.text }}</div>
-                        <div class="date-create-comment">{{ comment.created_at }}</div>
-                      </div>
-                    </div>
-                  </div>
-                  <form :id="'addComment_' + post.id" @submit.prevent="addComment(post.id)">
-                    <div class="form-group">
-                      <textarea :id="'commentText_' + post.id" class="form-control" rows="3" v-model="newComment"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Отправить</button>
-                  </form>
-                </div>
+                <CommentSection :post="post" @comment-added="fetchUsersPosts" />
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Футер -->
     <Footer />
   </div>
 </template>
 
 <script>
-// Импорт компонентов навбара и футера
+
 import Navbar from '../components/base/Navbar.vue';
 import Footer from '../components/base/Footer.vue';
 import axios from 'axios';
 import UploadPostModal from '../components/Profile/UploadPostModal.vue';
+import CommentSection from '../components/Profile/CommentSection.vue';
+import DeletePostButton from '../components/Profile/DeletePostButton.vue'
+import LikeButton from '../components/Profile/LikeButton.vue';
+import { API_BASE_URL } from '../config';
 
 export default {
   components: {
     Navbar,
     Footer,
-    UploadPostModal
+    UploadPostModal,
+    CommentSection,
+    DeletePostButton,
+    LikeButton
   },
   data() {
     return {
@@ -163,70 +124,45 @@ export default {
         bio: ''
       },
       posts: [],
-      newComment: ''
     };
   },
   created() {
     this.fetchUserProfile();
   },
   methods: {
-    openUploadPostModal() {
-      this.$refs.uploadPostModal.openModal();
-    },
-    openModalProfileInfo() {
-      this.showModalProfileInfo = true;
-    },
-    closeModalProfileInfo() {
-      this.showModalProfileInfo = false;
-    },
+    
     fetchUserProfile() {
       const UserID = this.$route.params.UserID;
-      axios.get(`http://127.0.0.1:8000/api/profile/${UserID}/`)
+      axios.get(`${API_BASE_URL}/profile/wall/${UserID}/`)
         .then(response => {
+        
           this.userProfile = response.data;
-          console.log(this.userProfile)
+          this.fetchUsersPosts()
         })
         .catch(error => {
           this.$router.push({ name: 'Home' });
         });
     },
-    
-    likePost(postId) {
-      axios.post(`http://127.0.0.1:8000/api/posts/${postId}/like/`)
-        .then(response => {
-          this.fetchUserPosts();
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    },
-    deletePost(postId) {
-      axios.delete(`http://127.0.0.1:8000/api/posts/${postId}/`)
-        .then(response => {
-          this.fetchUserPosts();
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    },
-    addComment(postId) {
-      axios.post(`http://127.0.0.1:8000/api/posts/${postId}/comments/`, {
-        text: this.newComment
+
+    fetchUsersPosts(){
+      const UserID = this.$route.params.UserID;
+      axios.get(`${API_BASE_URL}/wall/posts/${UserID}/`, {
+        headers: {
+          'Authorization': `token ${localStorage.getItem('token')}`
+        }}
+      )
+      .then(response => {
+
+        this.posts = response.data.posts
       })
-        .then(response => {
-          this.newComment = '';
-          this.fetchUserPosts();
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    }
+
+    },
   }
 };
 </script>
 
+
 <style scoped>
-@import '../styles/modal-windows/profile-info.css';
-@import '../styles/profile/style-profile.css';
-@import '../styles/profile/style-profile-v2.css';
+ @import '../styles/profile/header-profile.css';
+ @import '../styles/profile/content-profile.css';
 </style>

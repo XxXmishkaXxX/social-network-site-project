@@ -8,7 +8,7 @@
         <div>
           <label for="firstName" class="mb-3">Имя:</label>
           <input type="text" id="firstName" class="form-control create-all-input px-3" v-model="userData.firstName">
-          
+          <br>
           <label for="lastName" class="mb-3">Фамилия:</label>
           <input type="text" id="lastName" v-model="userData.lastName" class="form-control create-all-input px-3">
         </div>
@@ -120,10 +120,11 @@
   import VueDatePicker from '@vuepic/vue-datepicker';
   import '@vuepic/vue-datepicker/dist/main.css'
   import axios from 'axios';
-  import { toast } from 'vue3-toastify';
+  import  {toastMixin}  from '../mixins/toastMixin';
   import 'vue3-toastify/dist/index.css';
+  import { API_BASE_URL } from '../config';
 
-export default {
+  export default {
   components: {
     VueDatePicker
   },
@@ -142,20 +143,21 @@ export default {
         lastName: ''
       },
       userData2: {
-        avatar: null,
+        avatar: '',
         sex: 'M',
         date: null
       },
       userData3:{
         bio: '',
-        country: null,
-        city: null
+        country: '',
+        city: ''
       },
       avatarPreviewUrl: '../src/assets/images/createProfile/default_avatar.jpg',
       minBirthDate: minBirthDate,
       maxBirthDate: maxBirthDate
     };
   },
+  mixins:[toastMixin],
   methods: {
     format(date) {
       const day = date.getDate();
@@ -164,11 +166,7 @@ export default {
 
       return `${year}-${month}-${day}`;
     },
-    showErrorMessage(error){
-          toast.error(error, {
-            autoClose: 3000,
-          });
-      },
+
     nextStep() {
       if (this.step === 1 && (!this.userData.firstName || !this.userData.lastName)) {
         this.showErrorMessage('Пожалуйста, введите имя и фамилию.');
@@ -192,72 +190,59 @@ export default {
           this.avatarPreviewUrl = e.target.result;
         };
         reader.readAsDataURL(file);
-        this.userData2.avatar = file
+        this.userData2.avatar = file;
       }
     },
     async fetchCountries() {
-      if (!this.countriesLoaded) { // Проверяем, был ли уже выполнен запрос
+      if (!this.countriesLoaded) { // Check if the request has already been made
         try {
-            const response = await axios.get('http://127.0.0.1:8000/api/profile/get_countries/');
-            this.countries = response.data;
-            this.countriesLoaded = true; // Устанавливаем флаг загрузки стран
+          const response = await axios.get(`${API_BASE_URL}/profile/get_countries/`);
+          this.countries = response.data;
+          this.countriesLoaded = true; // Set the flag to indicate countries are loaded
         } catch (error) {
-            console.error('Ошибка при получении списка стран:', error);
+          console.error('Error fetching countries:', error);
         }
-    }
+      }
     },
     async fetchCities(countryId) {
-        try {
-            const response = await axios.get('http://127.0.0.1:8000/api/profile/get_cities_by_country/'+countryId+'/');
-            this.cities = response.data; // предположим, что сервер возвращает массив объектов городов
-        } catch (error) {
-            console.error('Ошибка при получении списка городов:', error);
-        }
+      try {
+        const response = await axios.get(`${API_BASE_URL}/profile/get_cities_by_country/${countryId}/`);
+        this.cities = response.data; 
+      } catch (error) {
+        console.error('Error fetching cities:', error);
+      }
     },
     async onCountryChange() {
-        if (this.userData3.country) {
-            await this.fetchCities(this.userData3.country);
-            document.getElementById('city_div').style.display = 'block'; // отображаем блок выбора города
-        } else {
-            this.userData3.city = null; // сбрасываем выбранный город, если страна не выбрана
-            document.getElementById('city_div').style.display = 'none'; // скрываем блок выбора города
-        }
+      if (this.userData3.country) {
+        await this.fetchCities(this.userData3.country);
+        document.getElementById('city_div').style.display = 'block'; // Show city selection
+      } else {
+        this.userData3.city = null; // Reset city if country is not selected
+        document.getElementById('city_div').style.display = 'none'; // Hide city selection
+      }
     },
     async submitForm() {
-      console.log(this.userData2.avatar)
+      const formData = new FormData();
+      formData.append('full_name', `${this.userData.lastName}|${this.userData.firstName}`);
+      formData.append('avatar', this.userData2.avatar);
+      formData.append('sex', this.userData2.sex);
+      formData.append('birth_date', `${this.userData2.date.getFullYear()}-${this.userData2.date.getMonth() + 1}-${this.userData2.date.getDate()}`);
+      formData.append('bio', this.userData3.bio);
+      formData.append('country', this.userData3.country);
+      formData.append('city', this.userData3.city);
+
       try {
-          const formData = new FormData();
-          formData.append('full_name', this.userData.firstName + '|' + this.userData.lastName);
-          formData.append('avatar', this.userData2.avatar);
-          formData.append('sex', this.userData2.sex);
-          formData.append('birth_date', `${this.userData2.date.getFullYear()}-${this.userData2.date.getMonth()+1}-${this.userData2.date.getDate()}`);
-          formData.append('bio', this.userData3.bio);
-          formData.append('country', this.userData3.country);
-          formData.append('city', this.userData3.city);
-
-          const response = await fetch('http://127.0.0.1:8000/api/profile/create/', {
-            method: 'POST',
-            headers: {
-              'Authorization': 'token '+localStorage.getItem('token')
-            },
-            body: formData,
-            })
-          const responseData = await response.json();
-          
-          console.log(responseData)
-          if (responseData.status) {
-            this.$router.push('/');
+        const response = await axios.post(`${API_BASE_URL}/profile/create/`, formData, {
+          headers: {
+            'Authorization': 'token ' + localStorage.getItem('token'),
+            'Content-Type': 'multipart/form-data'
           }
-          if (responseData.birth_date){
-            this.showErrorMessage('Введенная вами дата не соответствует правилам')
-          }
-          if(responseData.full_name){
-            this.showErrorMessage(responseData.full_name)
-          }
-
-        } catch (error) {
-            this.showErrorMessage(error);
-        }
+        });
+        this.$router.push('/wall/'+localStorage.getItem('UserID')+'/');
+      } catch (error) {
+        console.error(error);
+        this.showErrorMessage('Error creating profile.');
+      }
     },
   }
 };

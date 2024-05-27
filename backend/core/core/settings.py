@@ -88,6 +88,7 @@ ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = False
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_CHANGE_EMAIL = True
 
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -166,6 +167,10 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 
 REST_AUTH_LOGIN_SERIALIZERS = {
     'LOGIN_SERIALIZER': 'users.serializers.CustomLoginSerializer',
+}
+
+REST_AUTH = {
+    'OLD_PASSWORD_FIELD_ENABLED': True,
 }
 
 AUTH_USER_MODEL = 'users.CustomUser'

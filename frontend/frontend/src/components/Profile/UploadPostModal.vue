@@ -1,6 +1,6 @@
 <template>
   <div class="root">
-      <div class="add_post">
+      <div class="add_post" style="">
           <button class="btn btn-success" @click="toggleModal">Загрузить работу</button>
       </div>
       <div v-if="showModal" id="modalCreatePost" class="modalPost" @click.self="closeModal">
@@ -61,6 +61,7 @@ export default {
         const data = await response.json();
         console.log('Post created successfully:', data);
         this.closeModal();
+        location.reload();
       } catch (error) {
         console.error('Error:', error);
       }

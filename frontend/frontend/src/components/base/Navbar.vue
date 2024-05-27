@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-navbar">
     <div class="container-fluid">
-      <a href="http://127.0.0.1:8000/" class="navbar-brand logo-name text-b-line"><b>TellYou</b></a>
+      <a href="/" class="navbar-brand logo-name text-b-line"><b>TellYou</b></a>
       <button type="button" class="navbar-toggler logo-button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
       </button>

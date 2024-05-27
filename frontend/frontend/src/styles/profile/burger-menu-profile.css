@@ -1,0 +1,51 @@
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 1000;
+  display: block;
+  font-size: 1rem;
+  color: #212529;
+  text-align: left;
+  list-style: none;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, .15);
+  border-radius: .25rem;
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .175);
+  padding: 0.5rem 0; /* Добавлено для улучшения отступов */
+}
+
+
+.menu a {
+  padding: .5rem 1.5rem; /* Увеличен padding для улучшения кликабельности */
+  clear: both;
+  font-weight: 400;
+  color: #212529;
+  text-align: inherit;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+  position: relative;
+  display: block; /* Добавлено для устранения возможных проблем с отображением */
+}
+
+.menu a::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: transparent;
+  transition: width 0.7s ease; /* Плавное изменение ширины */
+}
+
+.menu a:hover::before {
+  width: 100%; /* При наведении ширина становится 100% */
+  background-color: #74aae4; /* Цвет подчеркивания */
+}
+
+.menu a:hover {
+  border: none; /* Убираем границы при наведении */
+}
