@@ -1,32 +1,34 @@
 <template>
   <div class="menu-home-page navbar-nav ms-auto logo-button">
     <div v-if="isAuthenticated">
-      <div v-if="userProfile">
-        <div>
-          <img :src="userProfile.avatar" class="me-2" alt="Avatar"
-               style="width: 50px; height: 50px; border-radius:50px; object-fit: cover;">
-          {{ userProfile.full_name }}
+      <div v-if="userProfile" class="d-flex align-items-center">
+        <div class="d-flex align-items-center me-3">
+          <img :src="userProfile.avatar" alt="Avatar" style="width: 50px; height: 50px; border-radius: 50px; object-fit: cover; margin-right: 10px;">
+          <span>{{ userProfile.full_name }}</span>
         </div>
-        <div class="menu ms-2">
-          <button class="btn btn-profile">
+
+        <div class="ms-2" ref="dropdown">
+          <button class="btn btn-profile" @click="toggleMenu">
             <i class="bi bi-list" style="width: 20px; height: 20px;"></i>
           </button>
-          <nav class="menu mt-3 shadow p-3 mb-5 bg-white rounded">
-            <ul class="list-unstyled mt-3" style="list-style-type: none;">
-              <li class="nav-item">
-                <a class="nav-link px-4" :href="`/wall/${userProfile.pk}`">Профиль</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link px-4" :href="`/profile/edit/${userProfile.pk}`">Редактирование профиля</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link px-4" href="#">Поддержка</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link px-4" @click="logout">Выйти</a>
-              </li>
-            </ul>
-          </nav>
+          <div v-if="showMenu" class="dropdown-menu" style="position: absolute; right: 0; top: 100%;">
+            <nav class="menu">
+              <ul class="list-unstyled mt-3" style="list-style-type: none;">
+                <li class="nav-item">
+                  <a class="nav-link px-4" :href="`/wall/${userProfile.pk}`">Профиль</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link px-4" :href="'/profile/edit/'">Редактирование профиля</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link px-4" href="#">Поддержка</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link px-4" @click="logout">Выйти</a>
+                </li>
+              </ul>
+            </nav>
+          </div>
         </div>
       </div>
       <div v-else>
@@ -42,6 +44,7 @@
 
 
 <script>
+import { API_BASE_URL } from '../../config';
 import axios from 'axios';
 
 export default {
@@ -49,12 +52,20 @@ export default {
     return {
       isAuthenticated: false,
       userProfile: null,
+      showMenu: false
     };
   },
   created() {
     this.checkToken();
   },
   methods: {
+    toggleMenu() {
+      console.log('!')
+      this.showMenu = !this.showMenu;
+    },
+    closeMenu() {
+      this.showMenu = false;
+    },
     checkToken() {
       const token = localStorage.getItem('token');
       if (token) {
@@ -66,7 +77,7 @@ export default {
     },
     getUserData(token) {
         const id = localStorage.getItem('UserID')
-        axios.get(`http://127.0.0.1:8000/api/profile/short/${id}/`, {
+        axios.get(`${API_BASE_URL}/profile/short/${id}/`, {
         headers: {
           Authorization: `token ${token}`,
         },
@@ -76,12 +87,13 @@ export default {
       })
       .catch(error => {
         console.error('Ошибка при получении данных пользователя:', error);
-        this.logout();
       });
     },
     logout() {
+
       const token = localStorage.getItem('token');
-      axios.post('http://127.0.0.1:8000/api/users/logout/', {}, {
+      console.log(token)
+      axios.post(`${API_BASE_URL}/users/logout/`, {
         headers: {
           Authorization: `token ${token}`,
         },
@@ -110,7 +122,5 @@ export default {
 </script>
 
 <style scoped>
-@import '../../styles/profile/style-profile.css';
-@import '../../styles/style-base.css';
-@import '../../styles/profile/style-profile-v2.css';
+@import '../../styles/profile/burger-menu-profile.css'
 </style>

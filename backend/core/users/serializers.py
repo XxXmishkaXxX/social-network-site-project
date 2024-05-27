@@ -4,9 +4,34 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework import serializers, exceptions
 from django.utils.translation import gettext_lazy as _
-from django.conf import settings 
+from django.conf import settings
+import re
 
 User = get_user_model()
+
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    code = serializers.UUIDField()
+
+class PasswordResetCompleteSerializer(serializers.Serializer):
+    uid = serializers.CharField()
+    code = serializers.UUIDField()
+    new_password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        if data['new_password'] != data['confirm_password']:
+            raise serializers.ValidationError("Пароли не совпадают")
+        
+        password = data.get('new_password')
+
+        if not re.match(r'^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_]).{8,}$', password):
+            raise serializers.ValidationError("Пароль должен содержать только латинские символы и быть не короче 8 символов")
+        
+        return data
 
 class CustomRegisterSerializer(RegisterSerializer):
     username = None

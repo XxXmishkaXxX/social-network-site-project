@@ -4,8 +4,9 @@ from .views import (PostAPIView,
                     CommentCreateAPIView)
 
 urlpatterns = [
+    path('posts/<int:pk>/', PostAPIView.as_view(), name='get-posts'),
     path('posts/create/', PostAPIView.as_view(), name='post-create'),
     path('posts/<int:pk>/delete/', PostAPIView.as_view(), name='post-delete'),
-    path('like/', LikeAPIView.as_view(), name='like'),
+    path('posts/like/<int:pk>/', LikeAPIView.as_view(), name='like'),
     path('comment/create/', CommentCreateAPIView.as_view(), name='comment-create')
 ]

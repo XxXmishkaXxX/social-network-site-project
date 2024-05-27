@@ -16,26 +16,8 @@
     z-index: 9999;
 }
 
-/* БУТЕР В ШАПКЕ */
-.menu {
-    position: relative;
-    z-index: 2;
 
-}
 
-.menu nav {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    display: none;
-    background-color: white; /* Добавляем фон для более явного отображения */
-
-}
-
-.menu nav.show {
-    display: block;
-
-}
 .btn-profile{
    border:none;
    position: relative;

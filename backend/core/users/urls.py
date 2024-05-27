@@ -1,7 +1,8 @@
 from django.urls import path, re_path
 from dj_rest_auth.registration.views import VerifyEmailView, ResendEmailVerificationView
 from dj_rest_auth.views import PasswordResetView, PasswordResetConfirmView, LogoutView
-from .views import CustomRegisterView, CustomLoginView, CustomConfirmEmailView, IsEmailConfirmed
+from .views import (CustomRegisterView, CustomLoginView, CustomConfirmEmailView, IsEmailConfirmed, PasswordChangeViewAPI, 
+                    PasswordResetRequestView, PasswordResetConfirmView, PasswordResetCompleteView)
 
 
 urlpatterns = [
@@ -17,7 +18,8 @@ urlpatterns = [
         name='account_confirm_email',
     ),
     path('resend-account-confirm-email', ResendEmailVerificationView.as_view(), name='resend-email-confirm'),
-    path('password-reset/', PasswordResetView.as_view(), name='reset_password'),
-    path('password-reset-confirm/<uidb64>/<token>/',
-         PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('change-password/', PasswordChangeViewAPI.as_view(), name='change_password'),
+    path('password/reset/request/', PasswordResetRequestView.as_view(), name='password_reset_request'),
+    path('password/reset/confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('password/reset/complete/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 ]

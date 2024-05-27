@@ -10,7 +10,7 @@
             <button @click="showSection('avatar')" class="btn btn-outline-primary">Аватар</button>
             <button @click="showSection('about_me')" class="btn btn-outline-primary">О себе</button>
             <button @click="showSection('change_password')" class="btn btn-outline-primary">Изменить пароль</button>
-            <a class="mt-2 abtn" style="" href="http://127.0.0.1:8000/">На главную</a>
+            <a class="mt-2 abtn" :href="'/'">На главную</a>
           </div>
         </div>
         <div class="col-md-8"><br><br>
@@ -90,9 +90,11 @@
                   </div>
                   <br><br><br><br><br><br><br>
                 </div>
+                <ChangePassword :currentSection="currentSection" />
               </div>
-              <button type="submit">Сохранить</button>
-              <a href="/">Отмена</a>
+              <button v-if="currentSection !== 'change_password'" type="submit" class="btn btn-success">Сохранить</button>
+              <span>&nbsp;</span>
+              <button v-if="currentSection !== 'change_password'" class="btn btn-danger">Отмена</button>
             </form>
           </div>
         </div>
@@ -108,66 +110,63 @@
   import VueDatePicker from '@vuepic/vue-datepicker';
   import '@vuepic/vue-datepicker/dist/main.css'
   import axios from 'axios';
-  import { toast } from 'vue3-toastify';
-  
-  export default {
-    components: {
-      Navbar,
-      Footer,
-      VueDatePicker
-    },
-    data() {
-      const today = new Date();
-      const maxBirthDate = new Date(today.getFullYear() - 14, today.getMonth(), today.getDate());
-      const minBirthDate = new Date(today.getFullYear() - 120, today.getMonth(), today.getDate());
-      return {
-        userProfile: {
-            country: {id:'',name:''},
-            city: {},
-            avatar: '',
-            sex: '',
-            birth_date: '',
-            bio: '',
-            last_name: '',
-            first_name: ''
-        },
-        currentSection: 'basic_info',
-        lastName: '',
-        firstName: '',
-        countries: [],
-        cities: [],
-        avatarPreviewUrl: "",
-        countriesLoaded: false,
-        avatarChanged: false,
-        minBirthDate: minBirthDate,
-        maxBirthDate: maxBirthDate
-      };
-    },
-    mounted() {
-      this.fetchUserData();
-    },
-    computed: {
-        fullName() {
-            return `${this.lastName}|${this.firstName}`;
-        }
-    },
-    methods: {
-      format(date) {
-          const day = date.getDate();
-          const month = date.getMonth() + 1;
-          const year = date.getFullYear();
+  import ChangePassword from '@/components/Profile/ChangePassword.vue';
+  import  {toastMixin}  from '../mixins/toastMixin';
 
-          return `${year}-${month}-${day}`;
-        },
-        showErrorMessage(error){
-          toast.error(error, {
-            autoClose: 3000,
-          });
+  export default {
+  components: {
+    Navbar,
+    Footer,
+    VueDatePicker,
+    ChangePassword
+  },
+  data() {
+    const today = new Date();
+    const maxBirthDate = new Date(today.getFullYear() - 14, today.getMonth(), today.getDate());
+    const minBirthDate = new Date(today.getFullYear() - 120, today.getMonth(), today.getDate());
+    return {
+      userProfile: {
+        country: {id:'',name:''},
+        city: {id:'',name:''},
+        avatar: '',
+        sex: '',
+        birth_date: '',
+        bio: '',
+        last_name: '',
+        first_name: ''
       },
-      showSection(section) {
-        this.currentSection = section;
-      },
-      previewAvatar(event) {
+      currentSection: 'basic_info',
+      lastName: '',
+      firstName: '',
+      countries: [],
+      cities: [],
+      avatarPreviewUrl: "",
+      countriesLoaded: false,
+      avatarChanged: false,
+      minBirthDate: minBirthDate,
+      maxBirthDate: maxBirthDate
+    };
+  },
+  mounted() {
+    this.fetchUserData();
+  },
+  computed: {
+    fullName() {
+      return `${this.firstName}|${this.lastName}`;
+    }
+  },
+  mixins: [toastMixin],
+  methods: {
+    format(date) {
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+      return `${year}-${month}-${day}`;
+    },
+    showSection(section) {
+      this.currentSection = section;
+    },
+    previewAvatar(event) {
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
@@ -175,104 +174,97 @@
           this.avatarPreviewUrl = e.target.result;
         };
         reader.readAsDataURL(file);
-        this.userProfile.avatar = file
+        this.userProfile.avatar = file;
         this.avatarChanged = true;
       }
     },
-      async fetchCountries() {
-        if (!this.countriesLoaded) { // Проверяем, был ли уже выполнен запрос
-            try {
-                const response = await axios.get('http://127.0.0.1:8000/api/profile/get_countries/');
-                this.countries = response.data;
-                this.countriesLoaded = true;
-            } catch (error) {
-                console.error('Ошибка при получении списка стран:', error);
-                }
-            }
-        },
-        async fetchCities(countryID) {
-            try {
-                this.cities = []
-                console.log(countryID)
-                const response = await axios.get('http://127.0.0.1:8000/api/profile/get_cities_by_country/'+countryID+'/');
-                this.cities = response.data; // предположим, что сервер возвращает массив объектов городов
-            } catch (error) {
-                console.error('Ошибка при получении списка городов:', error);
-            }
-        },
-        async onCountryChange() {
-            if (this.userProfile.country) {
-                await this.fetchCities(this.userProfile.country.id);
-
-            } else {
-                this.userProfile.city = null;
-            }
-        },
-        fetchUserData() {
-          const UserID = this.$route.params.UserID;
-          axios.get(`http://127.0.0.1:8000/api/profile/${UserID}/`)
-            .then(response => {
-              this.userProfile = response.data;
-              console.log(response.data)
-              const fullNameParts = this.userProfile.full_name.split(' ');
-              this.lastName= fullNameParts[0];
-              this.firstName = fullNameParts.slice(1).join(' ');
-              return this.fetchCountries();
-            })
-            .then(() => {
-              if (this.userProfile.country) {
-                return this.fetchCities(this.userProfile.country.id);
-              }
-            })
-            .catch(error => {
-              console.error('Ошибка при получении данных пользователя:', error);
-              this.$router.push({ name: 'Home' });
-            });
-      },
-
-      async submitForm() {
+    async fetchCountries() {
+      if (!this.countriesLoaded) {
         try {
-        console.log("!")
-          const formData = new FormData();
-          formData.append('full_name', this.fullName);
-          if (this.avatarChanged) {
+          const response = await axios.get('http://127.0.0.1:8000/api/profile/get_countries/');
+          this.countries = response.data;
+          this.countriesLoaded = true;
+        } catch (error) {
+          console.error('Ошибка при получении списка стран:', error);
+        }
+      }
+    },
+    async fetchCities(countryID) {
+      try {
+        this.cities = [];
+        console.log(countryID);
+        const response = await axios.get(`http://127.0.0.1:8000/api/profile/get_cities_by_country/${countryID}/`);
+        this.cities = response.data;
+      } catch (error) {
+        console.error('Ошибка при получении списка городов:', error);
+      }
+    },
+    async onCountryChange() {
+      if (this.userProfile.country) {
+        await this.fetchCities(this.userProfile.country.id);
+      } else {
+        this.userProfile.city = null;
+      }
+    },
+    fetchUserData() {
+      axios.get(`http://127.0.0.1:8000/api/profile/edit/`, {
+        headers: { Authorization: 'token ' + localStorage.getItem('token') }
+      })
+      .then(response => {
+        if (response.data.country === null) { response.data.country = { id: '', name: '' } }
+        if (response.data.city === null) { response.data.city = { id: '', name: '' } }
+        this.userProfile = response.data;
+        console.log(response.data);
+        const fullNameParts = this.userProfile.full_name.split(' ');
+        this.firstName = fullNameParts[0];
+        this.lastName = fullNameParts.slice(1).join(' ');
+        return this.fetchCountries();
+      })
+      .then(() => {
+        if (this.userProfile.country) {
+          return this.fetchCities(this.userProfile.country.id);
+        }
+      })
+      .catch(error => {
+        console.error('Ошибка при получении данных пользователя:', error);
+        this.$router.push({ name: 'Home' });
+      });
+    },
+    async submitForm() {
+      try {
+        const formData = new FormData();
+        formData.append('full_name', this.fullName);
+        if (this.avatarChanged) {
           formData.append('avatar', this.userProfile.avatar);
         }
-          formData.append('sex', this.userProfile.sex);
-          formData.append('birth_date', this.userProfile.birth_date);
-          formData.append('bio', this.userProfile.bio);
-          formData.append('country', this.userProfile.country.id);
-          formData.append('city', this.userProfile.city.id);
-          const UserID = this.$route.params.UserID;
+        formData.append('sex', this.userProfile.sex);
+        formData.append('birth_date', this.userProfile.birth_date);
+        formData.append('bio', this.userProfile.bio);
+        formData.append('country', this.userProfile.country.id);
+        formData.append('city', this.userProfile.city.id);
 
-          const response = await fetch(`http://127.0.0.1:8000/api/profile/edit/${UserID}/`, {
-            method: 'PUT',
+        const config = {
             headers: {
-              'Authorization': 'token ' + localStorage.getItem('token')
-            },
-            body: formData,
-          });
-          const responseData = await response.json();
-  
-          if (responseData.status) {
-            this.$router.push('/');
-          }
-          if (responseData.birth_date) {
-            this.showErrorMessage('Введенная вами дата не соответствует правилам');
-          }
-          if (responseData.full_name) {
-            this.showErrorMessage(responseData.full_name);
-          }
-  
-        } catch (error) {
-          console.error(error)
-          this.showErrorMessage(error);
-        }
-      },
+              'Authorization': 'Token ' + localStorage.getItem('token'), 
+              'Content-Type': 'multipart/form-data' 
+              }
+            };
+
+        const response = await axios.put(`http://127.0.0.1:8000/api/profile/edit/`, formData, config);
+        
+        this.showSuccessMessage("Данные сохранены")
+      
+      } catch (error) {
+
+        const errorMessage = error.response.data.full_name[0]
+        console.log(errorMessage)
+        this.showErrorMessage(errorMessage)
+      }
     }
-  };
-  </script>
-  
+  }
+};
+</script>
+
 
   <style scoped>
 @import '../styles/profile/style-profile.css';

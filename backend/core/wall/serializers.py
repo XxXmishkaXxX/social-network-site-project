@@ -4,9 +4,19 @@ from .models import Post, CommentPostModel, LikePostModel, ImagePost
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    user_profile_name = serializers.SerializerMethodField()
+    user_profile_avatar = serializers.SerializerMethodField()
+
+    def get_user_profile_name(self, obj):
+        return obj.user_profile.full_name
+    
+    def get_user_profile_avatar(self, obj):
+        return obj.user_profile.avatar.url
+
+
     class Meta:
         model = CommentPostModel
-        fields = ['id', 'post', 'author', 'content', 'created_at']
+        fields = ['id', 'post', 'user_profile', 'user_profile_name', 'user_profile_avatar', 'text', 'created_at']
 
 class PhotoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,8 +26,9 @@ class PhotoSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     MAX_FILES = 5
 
-    comment = CommentSerializer(many=True, read_only=True)
+    comment_for_post = CommentSerializer(many=True, read_only=True)
     images = PhotoSerializer(many=True, read_only=True)
+    liked = serializers.SerializerMethodField()
 
     def create(self, validated_data):
         images_data = self.context['request'].FILES.getlist('images')
@@ -37,6 +48,9 @@ class PostSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(f"Максимальное количество изображений для загрузки - {self.MAX_FILES}.")
         return images
 
+    def get_liked(self, obj):
+        return obj.like_for_post.values_list('user_profile_id', flat=True)
+
     class Meta:
         model = Post
-        fields = ['id', 'content', 'created_at', 'author', 'comment', 'images']
+        fields = ['id', 'content', 'created_at', 'author', 'comment_for_post', 'images', 'likes_count', 'liked']
