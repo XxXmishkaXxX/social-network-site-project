@@ -3,7 +3,7 @@
     <div v-if="isAuthenticated">
       <div v-if="userProfile" class="d-flex align-items-center">
         <div class="d-flex align-items-center me-3">
-          <img :src="userProfile.avatar" alt="Avatar" style="width: 50px; height: 50px; border-radius: 50px; object-fit: cover; margin-right: 10px;">
+          <img :src="userProfile.avatar" alt="Avatar" class="rounded-circle me-3" width="50" height="50">
           <span>{{ userProfile.full_name }}</span>
         </div>
 

@@ -9,18 +9,21 @@
         <div class="col-12" style="background-color: #FBF8F8; padding: 2rem; margin: 0 auto;">
           <br><br><br><br>
           <div class="profile-container d-flex align-items-center" style="border-radius:25px;">
-            <div class="avatar">
-              <img :src="userProfile.avatar" alt="avatar" class="ava-pre-img">
-            </div>
-            <div class="profile-info ms-7" style="max-width: 300px;">
-              <div class="full_name">
-                <h3>{{ userProfile.full_name }}</h3>
+            <div class="main d-flex align-items-center">
+              <div class="avatar">
+                <img :src="userProfile.avatar" alt="avatar" class="ava-pre-img">
               </div>
-              <div class="city" v-if="userProfile.city">
-                <p>Город: {{ userProfile.city.name }}</p>
+              <div class="profile-info ms-7" style="max-width: 300px;">
+                <div class="full_name">
+                  <h3>{{ userProfile.full_name }}</h3>
+                </div>
+                <div class="city" v-if="userProfile.city">
+                  <p>Город: {{ userProfile.city.name }}</p>
+                </div>
               </div>
-              <button @click="openModalProfileInfo" class="btn btn-outline-dark">Подробнее</button>
             </div>
+            <div v-if="userProfile.user == localStorage.getItem('UserID')" class="d-flex align-items-center">
+            
             <div class="edit_profile me-4">
               <router-link class="btn btn-primary" style="text-decoration: none; color:white;" :to="{ name: 'UpdateProfile', params: { userId: userProfile.id } }">
                 Редактировать профиль
@@ -30,25 +33,9 @@
               <UploadPostModal />
             </div>
           </div>
-
-          <div v-if="showModalProfileInfo" class="modal">
-            <div class="modal-content">
-              <div class="info">
-                <span @click="closeModalProfileInfo" class="close">&times;</span>
-                <div class="birth_date">
-                  <p>{{ userProfile.birth_date }}</p>
-                </div>
-                <div class="country">
-                  <p>{{ userProfile.country.name }}</p>
-                </div>
-                <div class="city">
-                  <p>{{ userProfile.city.name }}</p>
-                </div>
-                <div class="bio">
-                  <p>{{ userProfile.bio }}</p>
-                </div>
-              </div>
-            </div>
+          <div v-else>
+            <ButtonAddFriend />
+          </div>
           </div>
           <br>
           <div class="">
@@ -100,16 +87,18 @@ import UploadPostModal from '../components/Profile/UploadPostModal.vue';
 import CommentSection from '../components/Profile/CommentSection.vue';
 import DeletePostButton from '../components/Profile/DeletePostButton.vue'
 import LikeButton from '../components/Profile/LikeButton.vue';
+import ButtonAddFriend from '../components/Profile/ButtonAddFriend.vue'
 import { API_BASE_URL } from '../config';
 
 export default {
   components: {
     Navbar,
-    Footer,
+    Footer, 
     UploadPostModal,
     CommentSection,
     DeletePostButton,
-    LikeButton
+    LikeButton,
+    ButtonAddFriend
   },
   data() {
     return {
@@ -126,7 +115,7 @@ export default {
       posts: [],
     };
   },
-  created() {
+  mounted() {
     this.fetchUserProfile();
   },
   methods: {
@@ -137,6 +126,7 @@ export default {
         .then(response => {
         
           this.userProfile = response.data;
+          console.log(this.userProfile)
           this.fetchUsersPosts()
         })
         .catch(error => {

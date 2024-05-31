@@ -23,10 +23,14 @@
     flex-grow: 1;
   }
   
-  .full_name p {
+  .commenter-name p {
     margin: 0;
     font-weight: bold;
   }
+  .commenter-name a{
+    color: inherit;
+    text-decoration:none;
+}
   
   .comment_text {
     margin: 5px 0;

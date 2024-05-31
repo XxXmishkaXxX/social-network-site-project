@@ -33,6 +33,11 @@ const router = createRouter({
       path: '/profile/edit/',
       name: 'UpdateProfile',
       component: () => import('../views/UpdateProfile.vue')
+    },
+    {
+      path: '/friends/',
+      name: 'Friends',
+      component: () => import('../views/Friends.vue')
     }
   ]
 })
