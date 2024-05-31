@@ -18,10 +18,8 @@ class PostAPIView(APIView):
     authentication_classes = [TokenAuthentication]
 
     def get(self, request, pk, *args, **kwargs):
-        print(pk)
         try:
             user_profile = UserProfile.objects.get(pk=pk)
-            print(user_profile)
         except UserProfile.DoesNotExist:
             return Response({'detail': 'Пользователь не найден'}, status=status.HTTP_404_NOT_FOUND)
 

@@ -35,7 +35,7 @@ class UserProfileWallView(APIView):
     def get(self, request, pk):
         try:
             user_profile = UserProfile.objects.get(user=pk)
-            serializer = UserProfileSerializer(user_profile)
+            serializer = UserProfileSerializer(user_profile,  context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         except ObjectDoesNotExist:
             return Response({"error": "Профиль пользователя не найден"}, status=status.HTTP_404_NOT_FOUND)

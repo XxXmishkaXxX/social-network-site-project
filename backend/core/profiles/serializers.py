@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import UserProfile
+from relations.models import  Friend, FriendRequest
 from string import punctuation
 from cities_light.models import Country, City
 import re
