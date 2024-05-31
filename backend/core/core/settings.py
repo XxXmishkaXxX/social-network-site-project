@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'profiles.apps.ProfilesConfig',
     'wall.apps.WallConfig',
+    'relations.apps.RelationsConfig'
     
 ]
 
