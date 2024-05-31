@@ -1,8 +1,6 @@
 <template>
   <div class="root">
-      <div class="add_post" style="">
-          <button class="btn btn-success" @click="toggleModal">Загрузить работу</button>
-      </div>
+      <button class="btn btn-success" @click="toggleModal">Загрузить работу</button>
       <div v-if="showModal" id="modalCreatePost" class="modalPost" @click.self="closeModal">
           <div class="modal-content">
               <span class="close" @click="closeModal">&times;</span>
