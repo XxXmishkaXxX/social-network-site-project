@@ -7,7 +7,6 @@
     <div class="container">
       <div class="row">
         <div class="col-12" style="background-color: #FBF8F8; padding: 2rem; margin: 0 auto;">
-          <br><br><br><br>
           <div class="profile-container d-flex align-items-center" style="border-radius:25px;">
             <div class="main d-flex align-items-center">
               <div class="avatar">
@@ -24,14 +23,12 @@
             </div>
             <div v-if="userProfile.user == localStorage.getItem('UserID')" class="d-flex align-items-center">
             
-            <div class="edit_profile me-4">
-              <router-link class="btn btn-primary" style="text-decoration: none; color:white;" :to="{ name: 'UpdateProfile', params: { userId: userProfile.id } }">
+              <router-link class="btn btn-primary me-4" style="text-decoration: none; color:white;" 
+                            :to="{ name: 'UpdateProfile', params: { userId: userProfile.id } }">
                 Редактировать профиль
               </router-link>
-            </div>
-            <div class="upload_post">
+              
               <UploadPostModal />
-            </div>
           </div>
           <div v-else>
             <ButtonAddFriend />

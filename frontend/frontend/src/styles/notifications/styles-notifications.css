@@ -1,0 +1,64 @@
+.notification-list {
+    position: absolute;
+    top: 100%;
+    z-index: 999;
+    display: block;
+    font-size: 1rem;
+    color: #212529;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, .15);
+    border-radius: .25rem;
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .175);
+    padding: 0.5rem 0;
+    width: 500px;
+    max-height: calc(60px * 5 + 1px * 4 + 1rem); /* Adjust based on the height of the notifications and borders */
+    overflow-y: auto; /* Enables vertical scrolling */
+  }
+  
+  .notification-item {
+    padding: 0.5rem;
+    border-bottom: 1px solid #ccc; /* Separator between notifications */
+  }
+  
+  .notification-item:last-child {
+    border-bottom: none; /* Remove separator after the last notification */
+  }
+  
+  .notification-content {
+    display: flex;
+    align-items: center; /* Center items vertically */
+  }
+  
+  .avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .notification-content a{
+      color: inherit;
+      text-decoration:none;
+  }
+  
+  .notification-bell {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .notification-bell .bi {
+    font-size: 1.5em;
+  }
+  
+  .notification-bell .badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 0.2em 0.5em;
+  }

@@ -19,6 +19,7 @@
     "bootstrap-vue": "^2.23.1",
     "vue": "^3.4.21",
     "vue-class-component": "^8.0.0-rc.1",
+    "vue-native-websocket": "^2.0.15",
     "vue-router": "^4.3.0",
     "vue-socket.io": "^3.0.10",
     "vue-step-wizard": "^0.1.17",

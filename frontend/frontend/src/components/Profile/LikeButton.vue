@@ -1,6 +1,6 @@
 <template>
     <div class="like ms-3" id="like">
-      <button @click="likePost" class="btn btn-outline-danger me-2 mt-4">
+      <button @click="likePost" class="btn btn-outline-danger me-2">
         <b>
           <i :id="'heart-svg-' + postId" :class="heartClass"></i>
         </b>

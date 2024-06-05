@@ -8,6 +8,7 @@ from profiles.models import UserProfile
 from profiles.serializers import UserProfileSerializer
 from .models import Post, LikePostModel
 from .serializers import CommentSerializer, PostSerializer
+from notification.utils import send_like_notification, send_comment_notification
 
 
 
@@ -76,6 +77,12 @@ class LikeAPIView(APIView):
             post.likes_count += 1
             LikePostModel.objects.create(post_id=pk, user_profile=user_profile)
             post.save()
+
+            send_like_notification(
+                sender=request.user.userprofile,
+                recipient= post.author,
+                )
+
             return Response({'detail': 'Лайк создан', 'likes_count': post.likes_count}, status=status.HTTP_201_CREATED)
 
 
@@ -99,9 +106,15 @@ class CommentCreateAPIView(APIView):
             if comment_serializer.is_valid():
                 comment_serializer.save()
                 user_profile = UserProfileSerializer(request.user.userprofile, many=False)
+                
+                send_comment_notification(
+                    sender=request.user.userprofile,
+                    recipient= post.author,
+                    )
+                
                 return Response({'comment': comment_serializer.data, 'user_profile':user_profile.data}, status=status.HTTP_201_CREATED)
+            
             else:
-                print(comment_serializer.errors)
                 return Response(comment_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Post.DoesNotExist:
             return Response({'detail': 'Пост с указанным ID не существует'}, status=status.HTTP_404_NOT_FOUND)

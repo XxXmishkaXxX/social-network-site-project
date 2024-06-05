@@ -23,11 +23,11 @@
     
       buttonClass() {
         if (this.isFriend) {
-          return 'friend';
+          return 'friend btn';
         } else if (this.isRequestSent) {
-          return 'request-sent';
+          return 'request-sent btn';
         } else {
-          return 'not-friend';
+          return 'not-friend btn';
         }
       },
       buttonText() {
@@ -62,7 +62,6 @@
             await this.removeFriend();
             this.isFriend = false;
           } else if (this.isRequestSent) {
-            console.log('Запрос уже отправлен');
           } else {
             await this.addFriend();
             this.isRequestSent = true;
@@ -110,12 +109,12 @@
   }
   
   .request-sent {
-    background-color: orange;
+    background-color: rgb(37, 118, 224);
     color: white;
   }
   
   .not-friend {
-    background-color: gray;
+    background-color: rgb(123, 68, 253);
     color: white;
   }
   </style>
