@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'dj_rest_auth',
+    'channels',
     'corsheaders',
     'allauth',
     'allauth.account',
@@ -54,7 +55,8 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'profiles.apps.ProfilesConfig',
     'wall.apps.WallConfig',
-    'relations.apps.RelationsConfig'
+    'relations.apps.RelationsConfig',
+    'notification.apps.NotificationConfig'
     
 ]
 
@@ -116,9 +118,15 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'core.wsgi.application'
+# WSGI_APPLICATION = 'core.wsgi.application'
 
+ASGI_APPLICATION = 'core.routing.application'
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 

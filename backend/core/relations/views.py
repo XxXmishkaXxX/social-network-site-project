@@ -6,9 +6,10 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
 from rest_framework import status
 from copy import deepcopy
-from django.db.models import Q
 from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
+from notification.utils import send_friend_request_notification
+from profiles.models import UserProfile
 
 
 User = get_user_model()
@@ -33,16 +34,21 @@ class FriendRequestCreateAPIView(generics.CreateAPIView):
             
             data = deepcopy(request.data)
             data['from_user'] = request.user.id
-
             serializer = FriendRequestSerializer(data=data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
 
-            # Логика обработки запроса дружбы (например, отправка уведомлений и т.д.)
+
+            friend_request_id = serializer.instance.id
+            to_user_profile = UserProfile.objects.get(pk=data['to_user'])
+
+            send_friend_request_notification(
+                sender=request.user.userprofile,
+                recipient=to_user_profile, 
+                request_id= friend_request_id)
 
             return Response(status=status.HTTP_201_CREATED)
         except Exception as e:
-            print(e)
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 

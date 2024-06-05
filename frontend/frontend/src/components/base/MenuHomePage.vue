@@ -1,5 +1,5 @@
 <template>
-  <div class="menu-home-page navbar-nav ms-auto logo-button">
+  <div class="menu-home-page">
     <div v-if="isAuthenticated">
       <div v-if="userProfile" class="d-flex align-items-center">
         <div class="d-flex align-items-center me-3">

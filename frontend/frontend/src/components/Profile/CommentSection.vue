@@ -19,7 +19,7 @@
       </div>
       <form :id="'addComment_' + post.id" @submit.prevent="addComment(post.id)">
         <div class="form-group">
-          <textarea :id="'commentText_' + post.id" class="form-control" rows="3" v-model="newComment"></textarea>
+          <textarea :id="'commentText_' + post.id" class="form-control" rows="1" v-model="newComment"></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Отправить</button>
       </form>

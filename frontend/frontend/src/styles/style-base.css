@@ -38,7 +38,7 @@ body{
 
 }
 .text-b-line:hover{
-  text-decoration: underline;
+  text-decoration:none;
   color:black;
 }
 .btn-glav{
