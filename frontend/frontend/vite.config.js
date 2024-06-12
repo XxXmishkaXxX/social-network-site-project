@@ -10,16 +10,22 @@ export default defineConfig({
   server: {
     proxy: {
       '/media/avatars': {
-        target: 'http://127.0.0.1:8000',
+        target: 'http://localhost:8000',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/avatars/, '/avatars')
+        rewrite: (path) => path.replace(/^\/media\/avatars/, '/media/avatars')
       },
       '/media/post_images': {
-        target: 'http://127.0.0.1:8000',
+        target: 'http://localhost:8000',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/post_images/, '/post_images')
+        rewrite: (path) => path.replace(/^\/media\/post_images/, '/media/post_images')
       }
-    }
+    },
+    watch: {
+      usePolling: true,
+    },
+    host: true,
+    strictPort: true,
+    port: 8080
   },
 
   plugins: [

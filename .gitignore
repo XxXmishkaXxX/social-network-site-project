@@ -1,6 +1,6 @@
 .env
 myenv
-
+.env.dev
 # Logs
 logs
 *.log

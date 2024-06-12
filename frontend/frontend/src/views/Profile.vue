@@ -115,7 +115,6 @@ export default {
         .then(response => {
         
           this.userProfile = response.data;
-          console.log(this.userProfile)
           this.fetchUsersPosts()
         })
         .catch(error => {
