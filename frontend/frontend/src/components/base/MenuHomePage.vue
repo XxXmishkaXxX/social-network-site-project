@@ -13,12 +13,12 @@
           </button>
           <div v-if="showMenu" class="dropdown-menu" style="position: absolute; right: 0; top: 100%;">
             <nav class="menu">
-              <ul class="list-unstyled mt-3" style="list-style-type: none;">
+              <ul class="list-unstyled mt-3">
                 <li class="nav-item">
                   <a class="nav-link px-4" :href="`/wall/${userProfile.pk}`">Профиль</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link px-4" :href="'/profile/edit/'">Редактирование профиля</a>
+                  <a class="nav-link px-4" href="/profile/edit/">Редактирование профиля</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link px-4" href="#">Поддержка</a>
@@ -42,7 +42,6 @@
   </div>
 </template>
 
-
 <script>
 import { API_BASE_URL } from '../../config';
 import axios from 'axios';
@@ -60,11 +59,18 @@ export default {
   },
   methods: {
     toggleMenu() {
-      console.log('!')
       this.showMenu = !this.showMenu;
+      if (this.showMenu) {
+        document.addEventListener('click', this.closeMenuOnClickOutside);
+      } else {
+        document.removeEventListener('click', this.closeMenuOnClickOutside);
+      }
     },
-    closeMenu() {
-      this.showMenu = false;
+    closeMenuOnClickOutside(event) {
+      if (this.$refs.dropdown && !this.$refs.dropdown.contains(event.target)) {
+        this.showMenu = false;
+        document.removeEventListener('click', this.closeMenuOnClickOutside);
+      }
     },
     checkToken() {
       const token = localStorage.getItem('token');
@@ -76,8 +82,8 @@ export default {
       }
     },
     getUserData(token) {
-        const id = localStorage.getItem('UserID')
-        axios.get(`${API_BASE_URL}/profile/short/${id}/`, {
+      const id = localStorage.getItem('UserID');
+      axios.get(`${API_BASE_URL}/profile/short/${id}/`, {
         headers: {
           Authorization: `token ${token}`,
         },
@@ -90,10 +96,8 @@ export default {
       });
     },
     logout() {
-
       const token = localStorage.getItem('token');
-      console.log(token)
-      axios.post(`${API_BASE_URL}/users/logout/`, {
+      axios.post(`${API_BASE_URL}/users/logout/`, null, {
         headers: {
           Authorization: `token ${token}`,
         },
@@ -102,7 +106,7 @@ export default {
         localStorage.removeItem('token');
         this.isAuthenticated = false;
         this.userProfile = null;
-        this.user = null;
+        this.$router.push({ name: 'Home' });
       })
       .catch(error => {
         console.error('Ошибка при выходе:', error);
@@ -115,12 +119,9 @@ export default {
       this.$router.push({ name: 'CreateProfile' });
     },
   },
-  created() {
-    this.checkToken();
-  },
 };
 </script>
 
 <style scoped>
-@import '../../styles/profile/burger-menu-profile.css'
+@import '../../styles/profile/burger-menu-profile.css';
 </style>

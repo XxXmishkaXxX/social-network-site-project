@@ -1,0 +1,46 @@
+
+services:
+  backend:
+    build:
+      context: ./backend/core/
+    container_name: backend
+    command: ['sh', 'django-run.sh']
+    volumes:
+      - ./backend:/backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/core/.env.dev
+    depends_on:
+      - db
+      - redis
+
+  frontend:
+    build:
+      context: ./frontend/frontend/
+    container_name: frontend
+    command: npm run dev
+    volumes:
+      - ./frontend:/frontend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:13
+    container_name: db
+
+    env_file:
+      - ./backend/core/.env.dev
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+  redis:
+    image: redis:6
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:
