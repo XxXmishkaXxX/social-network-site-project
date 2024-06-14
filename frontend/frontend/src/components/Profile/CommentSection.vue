@@ -27,6 +27,9 @@
   </template>
   
   <script>
+import axios from 'axios';
+import { API_BASE_URL } from '../../config';
+
   export default {
     props: ['post'],
     data() {
@@ -35,17 +38,16 @@
       };
     },
     methods: {
-      addComment(postId) {
-        const response = fetch('http://127.0.0.1:8000/api/wall/comment/create/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `token ${localStorage.getItem('token')}`
-          },
-          body: JSON.stringify({
+      async addComment(postId) {
+        const token = localStorage.getItem('token');
+        const response = await axios.post(`${API_BASE_URL}/wall/comment/create/`, {
             post_id: postId,
             text: this.newComment
-          })
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `token ${token}`
+            }
         })
           .then(response => {
             this.newComment = '';

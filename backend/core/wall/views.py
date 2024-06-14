@@ -78,10 +78,11 @@ class LikeAPIView(APIView):
             LikePostModel.objects.create(post_id=pk, user_profile=user_profile)
             post.save()
 
-            send_like_notification(
-                sender=request.user.userprofile,
-                recipient= post.author,
-                )
+            if request.user.userprofile != post.author:
+                send_like_notification(
+                    sender=request.user.userprofile,
+                    recipient= post.author,
+                    )
 
             return Response({'detail': 'Лайк создан', 'likes_count': post.likes_count}, status=status.HTTP_201_CREATED)
 
@@ -107,10 +108,12 @@ class CommentCreateAPIView(APIView):
                 comment_serializer.save()
                 user_profile = UserProfileSerializer(request.user.userprofile, many=False)
                 
-                send_comment_notification(
-                    sender=request.user.userprofile,
-                    recipient= post.author,
-                    )
+
+                if request.user.userprofile != post.author:
+                    send_comment_notification(
+                        sender=request.user.userprofile,
+                        recipient= post.author,
+                        )
                 
                 return Response({'comment': comment_serializer.data, 'user_profile':user_profile.data}, status=status.HTTP_201_CREATED)
             
@@ -119,6 +122,5 @@ class CommentCreateAPIView(APIView):
         except Post.DoesNotExist:
             return Response({'detail': 'Пост с указанным ID не существует'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            print(e)
             return Response({'detail': 'Произошла ошибка при добавлении комментария'},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)

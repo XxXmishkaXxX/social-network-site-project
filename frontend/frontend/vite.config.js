@@ -10,12 +10,12 @@ export default defineConfig({
   server: {
     proxy: {
       '/media/avatars': {
-        target: 'http://localhost:8000',
+        target: 'http://backend:8000',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/media\/avatars/, '/media/avatars')
       },
       '/media/post_images': {
-        target: 'http://localhost:8000',
+        target: 'http://backend:8000',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/media\/post_images/, '/media/post_images')
       }
