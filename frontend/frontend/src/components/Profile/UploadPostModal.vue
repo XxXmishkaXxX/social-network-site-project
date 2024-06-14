@@ -3,13 +3,14 @@
       <button class="btn btn-success" @click="toggleModal">Загрузить работу</button>
       <div v-if="showModal" id="modalCreatePost" class="modalPost" @click.self="closeModal">
           <div class="modal-content">
-              <span class="close" @click="closeModal">&times;</span>
+              <span class="close" @click="closeModal">х</span>
               <form id="createForm" @submit.prevent="createPost">
+                <br>
                   <textarea v-model="postTitle" placeholder="Введите заголовок работы" rows="3"
-                          style="height: 100px; width: 920px;"></textarea><br>
-                  <input type="file" id="postImages" @change="handleFileUpload" multiple>
+                          style="height: 100px; width: 910px; padding: 10px;"></textarea><br><br>
+                          <input type="file"  class="form-control" id="postImages" @change="handleFileUpload" multiple >
                   <br>
-                  <button type="submit" class="btn btn-primary">Отправить</button>
+                  <button type="submit" class="btn btn-success">Отправить</button>
               </form>
           </div>
       </div>
@@ -101,4 +102,22 @@ export default {
   color: black;
   text-decoration: none;
 }
+
+.custom-file-input {
+      display: none;
+    }
+
+    .custom-file-label {
+      display: inline-block;
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .custom-file-label:hover {
+      background-color: #0056b3;
+    }
 </style>

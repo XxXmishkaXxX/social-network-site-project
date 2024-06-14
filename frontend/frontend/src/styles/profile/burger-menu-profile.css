@@ -53,3 +53,6 @@
 .menu-home-page{
   margin-right:10%;
 }
+.ms-minus-1 {
+  margin-left: -0.5rem !important;
+}

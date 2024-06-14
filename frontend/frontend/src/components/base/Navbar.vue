@@ -5,7 +5,7 @@
       <button type="button" class="navbar-toggler logo-button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <Notifications />
+      <Notifications v-if="userToken"/>
       <MenuHomePage />
     </div>
   </nav>
@@ -18,7 +18,14 @@
   export default {
     components: {
       MenuHomePage, 
-    }
+    },
+
+    data() {
+      return {
+        userToken: localStorage.getItem('token') // Использование хука data для userToken
+      };
+    },
+
   };
   </script>
   

@@ -1,6 +1,6 @@
 <template>
     <div>
-      <button :class="{ 'btn-success': emailConfirmed }" class="btn mt-2" @click="checkEmail">
+      <button :class="{ 'btn-success': emailConfirmed }" class="btn btn-light mt-2" @click="checkEmail">
         {{ emailConfirmed ? 'Подтверждено' : 'Проверить почту' }}
       </button>
     </div>

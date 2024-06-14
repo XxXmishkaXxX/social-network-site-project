@@ -40,11 +40,9 @@ export default {
       };
       
       this.socket.onopen = () => {
-        console.log('WebSocket connection established.');
       };
       
       this.socket.onclose = () => {
-        console.log('WebSocket connection closed.');
       };
       
       this.socket.onerror = (error) => {
@@ -68,7 +66,6 @@ export default {
         });
         this.notifications = response.data;
         this.unreadCount = response.data.filter(notification => !notification.read).length;
-        console.log(this.notifications)
       } catch (error) {}
     }
   },

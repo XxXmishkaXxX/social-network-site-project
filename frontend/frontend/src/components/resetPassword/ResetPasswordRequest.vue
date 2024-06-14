@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="d-flex align-items-center justify-content-center vh-100">
+        <div class="d-flex align-items-center justify-content-center vh-75">
             <div class="col-md-4">
                 <div class="card">
                 <div class="card-body">
@@ -11,8 +11,10 @@
                                 <label for="email" class="form-label">Email:</label>
                                 <input type="email" id="email" v-model="email" class="form-control" required />
                             </div>
-                            <button type="submit" class="btn btn-primary w-100">Сбросить пароль</button>
-                        </form>
+                            <button type="submit" class="btn btn-primary w-100 me-5">Сбросить пароль</button>
+                            
+                        </form><br>
+                        <a href="http://localhost:8080/login" class="btn btn-light w-100 ">Вернуться назад</a>
                     </div>
                     <div v-if="sendedMail">
                         <ResetPasswordConfirmVue />
@@ -60,7 +62,9 @@
   </script>
 
 <style scoped>
-.vh-100 {
-  height: 100vh;
-}
+
+.vh-75 {
+    height: 75vh !important;
+  }
+
 </style>
