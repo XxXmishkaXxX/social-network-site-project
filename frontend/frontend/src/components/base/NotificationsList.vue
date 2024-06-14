@@ -1,21 +1,30 @@
 <template>
   <div class="notification-list">
+  <!-- Контейнер для кнопки "Очистить все" -->
+  <div class="clear-all-container">
     <!-- Показать кнопку "Очистить все" только если есть уведомления -->
-    <button v-if="notifications.length > 0" @click="clearAll" class="btn btn-danger btn-sm">Очистить все</button>
-    <!-- Если нет уведомлений, отобразить сообщение -->
-    <div v-if="notifications.length === 0">Нет уведомлений</div>
-      <!-- Вывести уведомления -->
-      <div v-for="(notification, index) in notifications" :key="index" class="notification-item">
-        <div class="notification-content">
-          <img :src="notification.sender_avatar" alt="Avatar" class="avatar">
-          <div class="me-2">
-            <a :href="'/wall/' + notification.sender_id"><h6>{{ notification.sender_fullname }}</h6></a>
-            <p>{{ notification.message }}</p>
-          </div>
-          <button @click="removeNotification(index)" class="btn btn-outline-danger btn-sm">X</button>
-        </div>
-      </div>
+    <span style="">Ваша страница</span>
+    <a v-if="notifications.length > 0" @click="clearAll" class="btn btn-sm">Очистить все</a>
   </div>
+  
+  <!-- Если нет уведомлений, отобразить сообщение -->
+  <div v-if="notifications.length === 0" class="net_uved">Нет уведомлений</div>
+  <!-- Вывести уведомления -->
+  <div v-for="(notification, index) in notifications" :key="index" class="notification-item">
+    <div class="notification-content">
+      <img :src="notification.sender_avatar" alt="Avatar" class="avatar">
+      <div class="me-2">
+        <a :href="'/wall/' + notification.sender_id"><h6>{{ notification.sender_fullname }}</h6></a>
+        <p>{{ notification.message }}</p>
+      </div>
+      &nbsp;&nbsp;&nbsp;
+      <a @click="removeNotification(index)" class="">
+        <i class="bi bi-trash3"></i>
+      </a>
+    </div>
+  </div>
+</div>
+
 </template>
 
 <script>

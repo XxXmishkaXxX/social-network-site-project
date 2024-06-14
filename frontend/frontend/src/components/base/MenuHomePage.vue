@@ -7,9 +7,10 @@
           <span>{{ userProfile.full_name }}</span>
         </div>
 
-        <div class="ms-2" ref="dropdown">
+        <div class="ms-minus-1" ref="dropdown">
           <button class="btn btn-profile" @click="toggleMenu">
-            <i class="bi bi-list" style="width: 20px; height: 20px;"></i>
+            <i class="bi bi-three-dots"></i>
+            
           </button>
           <div v-if="showMenu" class="dropdown-menu" style="position: absolute; right: 0; top: 100%;">
             <nav class="menu">

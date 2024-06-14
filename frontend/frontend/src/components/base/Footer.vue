@@ -10,9 +10,9 @@
 
       <!-- Правая часть -->
       <div class="">
-        <a href="" class="me-4 text-reset"><img src="#" alt="vk"></a>
+        <a href="" class="me-4 text-reset"><img src="../assets/images/createProfile/kot.png" alt="vk"></a>
         <a href="" class="me-4 text-reset"><img src="#" alt="telegram"></a>
-        <a href="" class="me-4 text-reset"><img src="#" alt="whatsapp"></a>
+        <a href="" class="me-4 text-reset"><img src="" alt="whatsapp"></a>
       </div>
       <!-- Правая часть -->
     </section>
@@ -27,7 +27,7 @@
           <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
             <!-- Content -->
             <h6 class="text-uppercase fw-bold mb-4">
-              НАЗВАНИИЕ
+              TellYou
             </h6>
             <p>
               Проект разработан при поддержке Уральского федерального университета имени Первого Президента
@@ -49,7 +49,7 @@
               <a href="#!" class="text-reset">Посмотреть галерею</a>
             </p>
             <p>
-              <a href="#!" class="text-reset">еще мб</a>
+              <a href="#!" class="text-reset">Выйти</a>
             </p>
           </div>
           <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
@@ -64,10 +64,10 @@
               <a href="#!" class="text-reset">Регитсрация</a>
             </p>
             <p>
-              <a href="#!" class="text-reset">еще чето</a>
+              <a href="#!" class="text-reset">Лента</a>
             </p>
             <p>
-              <a href="#!" class="text-reset">Help</a>
+              <a href="#!" class="text-reset">Поддержка</a>
             </p>
           </div>
           <!-- Столбец с контактами -->

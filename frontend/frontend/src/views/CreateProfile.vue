@@ -12,7 +12,7 @@
           <label for="lastName" class="mb-3">Фамилия:</label>
           <input type="text" id="lastName" v-model="userData.lastName" class="form-control create-all-input px-3">
         </div>
-        <div class="d-none d-md-block col-md-6 align-self-center img-create">
+        <div class="d-none d-md-block align-self-center img-create">
             <img src="../assets/images/createProfile/sol.png" alt="Изображение" class="img-fluid">
         </div>
       <div class="button-container">
@@ -65,7 +65,7 @@
           
         </div>
 
-        <div class="d-none d-md-block col-md-6 align-self-center img-create">
+        <div class="d-none d-md-block align-self-center img-create">
                 <img src="../assets/images/createProfile/za.png" alt="Изображение" class="img-fluid">
             </div>
 
@@ -101,7 +101,7 @@
           </select>
         </div>
 
-        <div class="d-none d-md-block col-md-6 align-self-center img-create">
+        <div class="d-none d-md-block align-self-center img-create">
                 <img src="../assets/images/createProfile/kot.png" alt="Изображение" class="img-fluid">
         </div>
         <br>
@@ -257,5 +257,8 @@
         display: flex;
         gap: 10px;
         margin-top: 20px;
+    }
+    body{
+      overflow: hidden;
     }
 </style>

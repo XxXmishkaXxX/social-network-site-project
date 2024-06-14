@@ -106,5 +106,5 @@
   
 
   <style scoped>
-@import '../styles/style-auth.css'
-</style>
+  @import '../styles/style-auth.css';
+  </style>

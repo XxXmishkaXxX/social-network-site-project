@@ -60,7 +60,7 @@
                     </select>
                   </div>
                   <div class="d-none d-md-block col-md-6 align-self-center img-avatar-osnova">
-                    <img src="../assets/images/editProfile/lev.jpg" alt="Изображение" class="img-fluid">
+                    
                   </div>
                 </div>
                 <div v-else-if="currentSection === 'about_me'">
@@ -69,7 +69,7 @@
                     <textarea id="bio" v-model="userProfile.bio" rows="3" class="form-control bio-adap"></textarea>
                   </div>
                   <div class="d-none d-md-block col-md-6 align-self-center img-avatar-osnova">
-                    <img src="../assets/images/editProfile/ma.jpg" alt="Изображение" class="img-fluid">
+                    
                   </div>
                   <br><br><br><br><br><br><br><br><br><br><br><br><br>
                 </div>  
@@ -214,10 +214,12 @@
         if (response.data.country === null) { response.data.country = { id: '', name: '' } }
         if (response.data.city === null) { response.data.city = { id: '', name: '' } }
         this.userProfile = response.data;
-        console.log(response.data);
+
         const fullNameParts = this.userProfile.full_name.split(' ');
+        
         this.firstName = fullNameParts[0];
         this.lastName = fullNameParts.slice(1).join(' ');
+        
         return this.fetchCountries();
       })
       .then(() => {

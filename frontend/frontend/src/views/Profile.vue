@@ -1,69 +1,90 @@
 <template>
   <div>
-    <!-- Navbar -->
-    <Navbar />
-
-    <!-- Содержимое профиля -->
-    <div class="container-fluid">
-      <div class="row">
-        <SidePanel />
-        <div class="col-md-9 ml-sm-auto col-lg-8 px-4" style="background-color: #FBF8F8; padding: 2rem; margin: 0 auto; border-radius: 25px;">
-          <div class="profile-container d-flex justify-content-between align-items-center">
-            <div class="main d-flex align-items-center">
-              <div class="avatar">
-                <img :src="userProfile.avatar" alt="avatar" class="ava-pre-img">
+  <Navbar />
+    <div class="main-container d-flex flex-row">
+      <SideBar />
+      <div class="profile">
+        <div class="profile-container d-flex align-items-center">
+          <div class="main d-flex align-items-center">
+            <div class="avatar">
+              <img :src="userProfile.avatar" alt="avatar" class="ava-pre-img">
+            </div>
+            <div class="profile-info ms-4 me-2" style="margin-top: 20px;">
+              <div class="full_name">
+                <h3>{{ userProfile.full_name }}</h3>
               </div>
-              <div class="profile-info ms-4" style="max-width: 300px;">
-                <div class="full_name">
-                  <h3>{{ userProfile.full_name }}</h3>
-                </div>
-                <div class="city" v-if="userProfile.city">
-                  <p>Город: {{ userProfile.city.name }}</p>
-                </div>
+              <div class="city" v-if="userProfile.city">
+                <p>Город: {{ userProfile.city.name }}</p>
               </div>
-            </div>
-            <div v-if="userProfile.user == localStorage.getItem('UserID')" class="d-flex align-items-center">
-              <router-link class="btn btn-primary me-4" style="text-decoration: none; color: white;" :to="{ name: 'UpdateProfile', params: { userId: userProfile.id } }">
-                Редактировать профиль
-              </router-link>
-              <UploadPostModal />
-            </div>
-            <div v-else>
-              <ButtonAddFriend />
-            </div>
-          </div>
-          <br>
-          <div class="postContainer">
-            <div v-for="post in posts" :key="post.id" class="card mb-4" :id="'post-' + post.id">
-              <div class="card-body">
-                <p class="date">Дата публикации: {{ post.created_at }}</p>
-                <p class="card-text">{{ post.content }}</p>
-                <div class="container_images">
-                  <div class="row row-cols-2">
-                    <div v-for="image in post.images" :key="image.id" class="col">
-                      <div class="thumbnail">
-                        <div class="img-container">
-                          <img :src="image.image" alt="Post Image" class="img-fluid" style="border-radius: 20px;">
-                        </div>
-                      </div>
+              <!-- Кнопка для открытия модального окна -->
+              <button class="btn btn-info" style="margin-top: 20px; color:white;" @click="openModalUserInfo">Подробнее</button>
+              
+              <div class="modal fade" id="userInfoModal" tabindex="-1" aria-labelledby="userInfoModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="userInfoModalLabel">Информация о пользователе</h5>
+                    </div>
+                    <div class="modal-body">
+                      <p>Страна: {{ userProfile.country ? userProfile.country.name : 'Не указан' }}</p>
+                      <p>Город: {{ userProfile.city ? userProfile.city.name : 'Не указан' }}</p>
+                      <p>Дата рождения: {{ userProfile.birth_date}}</p>
+                      <p>Пол: {{ userProfile.sex}}</p>
+                      <p>О себе: {{ userProfile.bio}}</p>
                     </div>
                   </div>
                 </div>
-                <div class="d-flex align-items-center mt-3">
-                  <LikeButton :postId="post.id" :liked="post.liked" :likesCount="post.likes_count" @update="fetchUsersPosts" />
-                  <DeletePostButton v-if="userProfile.user == localStorage.getItem('UserID')" :isUserPost="true" :post-id="post.id" @post-deleted="fetchUsersPosts" />
-                </div>
-                <CommentSection :post="post" @comment-added="fetchUsersPosts" />
               </div>
             </div>
           </div>
+          <div v-if="userProfile.user == localStorage.getItem('UserID')" class="d-flex align-items-center">
+            <router-link class="btn btn-primary me-4" style="text-decoration: none; color: white;" :to="{ name: 'UpdateProfile', params: { userId: userProfile.id } }">
+              Редактировать профиль
+            </router-link>
+            <UploadPostModal />
+          </div>
+          <div v-else>
+            <ButtonAddFriend />
+          </div>
+        </div>
+        <br>
+        <div class="postContainer"><br>
+          <div v-for="post in posts" :key="post.id" class="card mb-4" :id="'post-' + post.id">
+            <div class="card-body">
+              <p class="date">{{ post.created_at }}</p>
+              <p class="card-text">{{ post.content }}</p>
+              <div class="container_images">
+                <div v-for="image in post.images" :key="image.id" class="col">
+                  <div class="thumbnail">
+                    <div class="img-container">
+                      <img :src="image.image" alt="Post Image" class="img-fluid" style="border-radius: 15px;" @click="openModalImg(image.image)">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex align-items-center mt-3">
+                <LikeButton :postId="post.id " :liked="post.liked" :likesCount="post.likes_count" @update="fetchUsersPosts" />
+                <DeletePostButton v-if="userProfile.user == localStorage.getItem('UserID')" :isUserPost="true" :post-id="post.id" @post-deleted="fetchUsersPosts" />
+              </div>
+              <hr>
+              <CommentSection :post="post" @comment-added="fetchUsersPosts" />
+            </div>
+          </div>
+          <!-- Modal -->
+          <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-xl"> 
+              <div class="modal-content">
+                  <img :src="currentImage" alt="Modal Image"> 
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
-    <Footer />
+  <Footer />
   </div>
 </template>
-
 <script>
 
 import Navbar from '../components/base/Navbar.vue';
@@ -75,8 +96,8 @@ import DeletePostButton from '../components/Profile/DeletePostButton.vue'
 import LikeButton from '../components/Profile/LikeButton.vue';
 import ButtonAddFriend from '../components/Profile/ButtonAddFriend.vue'
 import { API_BASE_URL } from '../config';
-import SidePanel from '../components/base/SidePanel.vue';
-
+import SideBar from '../components/base/SideBar.vue';
+import { Modal } from 'bootstrap'
 
 export default {
   components: {
@@ -87,7 +108,7 @@ export default {
     DeletePostButton,
     LikeButton,
     ButtonAddFriend,
-    SidePanel
+    SideBar
   },
   data(){
     return {
@@ -102,12 +123,32 @@ export default {
         bio: ''
       },
       posts: [],
+      currentImage: null,
     };
   },
   mounted() {
     this.fetchUserProfile();
   },
   methods: {
+    openModalImg(image) {
+      this.currentImage = image;
+      const modal = new Modal(document.getElementById('imageModal'));
+      modal.show();
+    },
+    closeModalImg() {
+      const modal = new Modal(document.getElementById('imageModal'));
+      modal.hide();
+    },
+
+    openModalUserInfo() {
+      const modal = new Modal(document.getElementById('userInfoModal'))
+      modal.show()
+    },
+  
+    closeModalUserInfo() {
+      const modal = new Modal(document.getElementById('userInfoModal'))
+      modal.hide()  
+    },
     
     fetchUserProfile() {
       const UserID = this.$route.params.UserID;
@@ -143,4 +184,19 @@ export default {
 <style scoped>
  @import '../styles/profile/header-profile.css';
  @import '../styles/profile/content-profile.css';
+</style>
+
+<style scoped>
+.main-container{
+  margin: 10px 10px 200px 200px ;
+  width: 80%;
+  flex-direction: column; 
+  align-items: flex-start;
+}
+.profile{
+  margin-right: 350px;
+  margin-left: 10px;
+  width: 1100px;
+}
+
 </style>

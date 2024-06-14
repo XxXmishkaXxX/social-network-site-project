@@ -6,6 +6,7 @@ from .models import Post, CommentPostModel, ImagePost
 class CommentSerializer(serializers.ModelSerializer):
     user_profile_name = serializers.SerializerMethodField()
     user_profile_avatar = serializers.SerializerMethodField()
+    created_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
 
     def get_user_profile_name(self, obj):
         return obj.user_profile.full_name
@@ -29,6 +30,7 @@ class PostSerializer(serializers.ModelSerializer):
     comment_for_post = CommentSerializer(many=True, read_only=True)
     images = PhotoSerializer(many=True, read_only=True)
     liked = serializers.SerializerMethodField()
+    created_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
 
     def create(self, validated_data):
         images_data = self.context['request'].FILES.getlist('images')
