@@ -1,21 +1,22 @@
 <template>
     <div>
-        <ul class="list-group">
-                <li v-for="friend in friends" :key="friend.id" class="list-group-item d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center">
-                        <img :src="friend.user_profile.avatar" alt="avatar" class="rounded-circle me-3" width="50" height="50">
-                        <div>
-                            <h5 class="mb-0">
-                                <a :href="`/wall/${friend.friend}/`" class="friend-name">{{ friend.user_profile.full_name }}</a>
-                            </h5>
-                            <small>{{ friend.university }}</small>
-                        </div>
-                    </div>
+        <ul class="list-group" v-if="friends.length > 0">
+            <li v-for="friend in friends" :key="friend.id" class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <img :src="friend.user_profile.avatar" alt="avatar" class="rounded-circle me-3" width="50" height="50">
                     <div>
-                        <a href="#" class="btn btn-link">Написать сообщение</a>
+                        <h5 class="mb-0">
+                            <a :href="`/wall/${friend.friend}/`" class="friend-name">{{ friend.user_profile.full_name }}</a>
+                        </h5>
+                        <small>{{ friend.university }}</small>
                     </div>
-                </li>
-            </ul>
+                </div>
+                <div>
+                    <a href="#" class="btn btn-link">Написать сообщение</a>
+                </div>
+            </li>
+        </ul>
+        <p v-else-if="friends && friends.length === 0" class="text-center">У вас нет добавленных друзей.</p>
     </div>
 </template>
 
@@ -26,7 +27,7 @@ import { API_BASE_URL } from '../../config';
 export default{
     data() {
         return {
-            friends: null
+            friends: []
         }
     },
     mounted() {

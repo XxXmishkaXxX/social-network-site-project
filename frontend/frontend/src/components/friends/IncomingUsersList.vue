@@ -1,21 +1,23 @@
 <template>
     <div>
-        <ul class="list-group">
-                <li v-for="user in users" :key="user.id" class="list-group-item d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center">
-                        <img :src="user.from_user_profile.avatar" alt="avatar" class="rounded-circle me-3" width="50" height="50">
-                        <div>
-                            <h5 class="mb-0">
-                                <a :href="`/wall/${user.from_user_profile.pk}/`" class="friend-name">{{ user.from_user_profile.full_name }}</a>
-                            </h5>
-                        </div>
-                    </div>
+        <ul class="list-group" v-if="users && users.length > 0">
+            <li v-for="user in users" :key="user.id" class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <img :src="user.from_user_profile.avatar" alt="avatar" class="rounded-circle me-3" width="50" height="50">
                     <div>
-                        <button type="button" class="btn btn-success me-2" @click="acceptFriendRequest(user.id)">Добавить</button>
-                        <button type="button" class="btn btn-danger" @click="cancelFriendRequest(user.id)">Отклонить</button>
+                        <h5 class="mb-0">
+                            <a :href="`/wall/${user.from_user_profile.pk}/`" class="friend-name">{{ user.from_user_profile.full_name }}</a>
+                        </h5>
                     </div>
-                </li>
-            </ul>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-success me-2" @click="acceptFriendRequest(user.id)">Добавить</button>
+                    <button type="button" class="btn btn-danger" @click="cancelFriendRequest(user.id)">Отклонить</button>
+                </div>
+            </li>
+        </ul>
+        <p v-else-if="users && users.length === 0" class="text-center">У вас нет входящих запросов на добавление в друзья.</p>
+        <p v-else class="text-center">Загрузка данных...</p>
     </div>
 </template>
 
@@ -26,13 +28,12 @@ import { API_BASE_URL } from '../../config';
 export default {
     data() {
         return {
-            users: null
+            users: [] // Инициализация пустым массивом
         }
     },
     mounted() {
         this.getIncomingUsers();
     },
-
     methods: {
         async getIncomingUsers() {
             try {
@@ -47,7 +48,6 @@ export default {
                 console.error('Error fetching friends:', error);
             }
         },
-
         async acceptFriendRequest(requestId) {
             try {
                 await axios.put(`${API_BASE_URL}/relations/accept-friend-request/${requestId}/`, null, {
@@ -61,7 +61,6 @@ export default {
                 console.error('Error accepting friend request:', error);
             }
         },
-
         async cancelFriendRequest(requestId) {
             try {
                 await axios.delete(`${API_BASE_URL}/relations/cancel-friend-request/${requestId}/`, {
@@ -90,5 +89,9 @@ export default {
     margin-bottom: 10px;
     background-color: #f8f9fa;
     border-radius: 8px;
+}
+.text-center {
+    text-align: center;
+    margin-top: 20px; /* Добавим отступ сверху */
 }
 </style>
