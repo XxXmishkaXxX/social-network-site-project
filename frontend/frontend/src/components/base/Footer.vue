@@ -10,9 +10,9 @@
 
       <!-- Правая часть -->
       <div class="">
-        <a href="" class="me-4 text-reset"><img src="../assets/images/createProfile/kot.png" alt="vk"></a>
-        <a href="" class="me-4 text-reset"><img src="#" alt="telegram"></a>
-        <a href="" class="me-4 text-reset"><img src="" alt="whatsapp"></a>
+        <a href="" class="me-4 text-reset"><img src="../../assets/images/index/footer/vk.svg" alt="vk" style="max-width: 25px;"></a>
+        <a href="" class="me-4 text-reset"><img src="../../assets/images/index/footer/telegram.svg" alt="telegram" style="max-width: 25px;"></a>
+        <a href="" class="me-4 text-reset"><img src="../../assets/images/index/footer/what.svg" alt="whatsapp" style="max-width: 25px;"></a>
       </div>
       <!-- Правая часть -->
     </section>

@@ -76,16 +76,21 @@
                 <div v-else-if="currentSection === 'avatar'">
                   <div class="row">
                     <div class="mb-3">
+                      <label for="avatar" class="form-label">Аватар:</label>
                       <br>
-                      <img id="avatarPreview1" :src="userProfile.avatar" alt="Avatar Preview" class="avatar-preview img-thumbnail avatar-pre-img" style="width: 128px; height: 128px;">
-                      <span>128px</span>
+                      <img id="avatarPreview" :src="avatarPreviewUrl" alt="Предварительный просмотр аватара"
+                        style="width: 128px; height: 128px;" class="avatar-preview img-thumbnail avatar-pre-img me-1">
+                      <span class="me-2">128px</span>
+                      
+                      <img id="avatarPreview2" :src="avatarPreviewUrl" alt="Avatar Preview"
+                        class="avatar-preview img-thumbnail avatar-pre-img2 me-1" style="width: 96px; height: 96px;">
+                      <span class="me-2">96px</span>
 
-                      <img id="avatarPreview2" :src="userProfile.avatar" alt="Avatar Preview" class="avatar-preview img-thumbnail avatar-pre-img2" style="width: 96px; height: 96px;">
-                      <span>96px</span>
+                      <img id="avatarPreview3" :src="avatarPreviewUrl" alt="Avatar Preview"
+                        class="avatar-preview img-thumbnail avatar-pre-img3 me-1" style="width: 64px; height: 64px;">
+                      <span class="me-2">64px</span>
 
-                      <img id="avatarPreview3" :src="userProfile.avatar" alt="Avatar Preview" class="avatar-preview img-thumbnail avatar-pre-img3" style="width: 64px; height: 64px;">
-                      <span>64px</span>
-                      <input id="avatar" type="file" name="avatar" @change="previewAvatar" class="form-control mt-5 i-size2" multiple>
+                      <input id="avatar" type="file" @change="onFileChange" class="form-control mt-5 w-25">
                     </div>
                   </div>
                   <br><br><br><br><br><br><br>
@@ -96,6 +101,25 @@
               <span>&nbsp;</span>
               <button v-if="currentSection !== 'change_password'" class="btn btn-danger">Отмена</button>
             </form>
+            <div class="modal" id="cropperModal" tabindex="-1" aria-labelledby="cropperModalLabel" aria-hidden="true"  data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="cropperModalLabel">Обрезка изображения</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="cancelCrop"></button>
+            </div>
+            <div class="modal-body">
+              <div class="cropper-box">
+                <img id="imgToCrop" :src="cropImageUrl" class="img-fluid">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="cancelCrop">Отмена</button>
+              <button type="button" class="btn btn-primary" @click="cropImage">Обрезать и сохранить</button>
+            </div>
+          </div>
+        </div>
+      </div>
           </div>
         </div>
       </div>
@@ -112,6 +136,9 @@
   import axios from 'axios';
   import ChangePassword from '@/components/Profile/ChangePassword.vue';
   import  {toastMixin}  from '../mixins/toastMixin';
+  import Cropper from 'cropperjs';
+  import 'cropperjs/dist/cropper.css';
+  import { Modal } from 'bootstrap'
 
   export default {
   components: {
@@ -140,11 +167,13 @@
       firstName: '',
       countries: [],
       cities: [],
-      avatarPreviewUrl: "",
       countriesLoaded: false,
       avatarChanged: false,
       minBirthDate: minBirthDate,
-      maxBirthDate: maxBirthDate
+      maxBirthDate: maxBirthDate,
+      cropper: null,
+      avatarPreviewUrl: null,
+      cropImageUrl: null,
     };
   },
   mounted() {
@@ -166,16 +195,44 @@
     showSection(section) {
       this.currentSection = section;
     },
-    previewAvatar(event) {
+    onFileChange(event) {
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          this.avatarPreviewUrl = e.target.result;
+          this.cropImageUrl  = e.target.result;
+          const cropperModal = new Modal(document.getElementById('cropperModal'));
+          cropperModal.show();
+          this.$nextTick(() => {
+            const imageElement = document.getElementById('imgToCrop');
+            this.cropper = new Cropper(imageElement, {
+              aspectRatio: 1,
+              viewMode: 1,
+            });
+          });
         };
         reader.readAsDataURL(file);
+      }
+    },
+
+    cropImage() {
+      const canvas = this.cropper.getCroppedCanvas();
+      this.avatarPreviewUrl = canvas.toDataURL();
+      canvas.toBlob((blob) => {
+        const file = new File([blob], 'avatar.jpg', { type: 'image/jpeg' });
         this.userProfile.avatar = file;
-        this.avatarChanged = true;
+      });
+      this.cropper.destroy();
+      const cropperModal = Modal.getInstance(document.getElementById('cropperModal'));
+      cropperModal.hide();
+      this.avatarChanged = true
+    },
+    cancelCrop() {
+      this.cropImageUrl = '';
+      document.getElementById('avatar').value = '';
+      if (this.cropper) {
+        this.cropper.destroy();
+        this.cropper = null;
       }
     },
     async fetchCountries() {
@@ -211,6 +268,7 @@
         headers: { Authorization: 'token ' + localStorage.getItem('token') }
       })
       .then(response => {
+        this.avatarPreviewUrl = response.data.avatar
         if (response.data.country === null) { response.data.country = { id: '', name: '' } }
         if (response.data.city === null) { response.data.city = { id: '', name: '' } }
         this.userProfile = response.data;
@@ -269,8 +327,6 @@
 
 
   <style scoped>
-@import '../styles/profile/style-profile.css';
-@import '../styles/profile/style-profile-v2.css';
-@import url('../styles/bootstrap/bootstrap.css');
+@import '../styles/profile/update-profile.css';
 @import url('../styles/style-base.css');
 </style>
