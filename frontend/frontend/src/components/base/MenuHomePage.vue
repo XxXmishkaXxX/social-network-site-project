@@ -93,7 +93,7 @@ export default {
         this.userProfile = response.data;
       })
       .catch(error => {
-        console.error('Ошибка при получении данных пользователя:', error);
+
       });
     },
     logout() {

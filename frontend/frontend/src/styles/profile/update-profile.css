@@ -1,4 +1,3 @@
-/* Custom styles for this page */
 .avatar-preview {
     max-width: 200px;
 }
@@ -6,16 +5,6 @@
 #nameFields {
     margin-bottom: 1rem;
 }
-
-.alert {
-    position: fixed; /* Фиксированное положение */
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 300px;
-    z-index: 9999;
-}
-
 
 
 .btn-profile{
@@ -61,7 +50,7 @@
   width: 35rem;
   height: 40px;
   border: 2px solid #000;
-  border-color: #000;
+  border-color: #0d6efd;
 
 }
 .edit-all-input:focus {
@@ -85,12 +74,8 @@
   left: -30vh;
 }
 
-.img-avatar{
-  position: absolute;
-  left: 46rem;
-  top:-145px;
-  z-index: -1;
-  right: 0;
+.avatar-preview{
+  border-radius: 50%;
 }
 
 .img-avatar-osnova{
@@ -161,28 +146,8 @@
   .mb-3 {
     margin-bottom: 15px;
   }
-  .reg-all-input {
-    width: 100%;
-  }
 
-
-
-  .btn {
-    width: 100%;
-  }
-  .logo-name-auth{
-    font-size:40px;
-    position: relative;
-    left: 11vh;
-    top:5vh;
-  }
-  /* позиция формы */
-  .pos-auth{
-    position: relative;
-    left: 0vh;
-    top: 15vh;
-  }
-
+  
   .ms-custom-edit {
     margin-left: -0.6rem !important;
   }

@@ -2,8 +2,8 @@
 myenv
 .env.dev
 
-media/avatars/
-media/post_images/post_images/
+backend/core/media/avatars/
+backend/core/media/post_images/post_images/
 # Logs
 logs
 *.log

@@ -1,0 +1,82 @@
+#nameFields {
+    margin-bottom: 1rem;
+}
+
+/* форма */
+
+.create-all-input {
+  border-radius: 20px;
+  width: 50rem;
+  height: 40px;
+  border: 2px solid #000;
+  border-color: #000;
+
+}
+.create-all-input:focus {
+  border: 2px solid #000;
+  border-color: #000;
+  box-shadow: none; /* Убрать тень обводки при фокусе */
+  border-color: initial; /* Убрать цвет обводки при фокусе */
+}
+.create-all-input:hover {
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25); /* Плавная обводка */
+}
+
+.h2-create{
+  font-size: 40px;
+  font-weight: bold;
+}
+.avatar-pre-img{
+  width: 180px;
+  height: 180px;
+  border-radius:180px;
+
+}
+
+.avatar-pre-img2{
+  width: 96px;
+  height: 96px;
+  border-radius:96px;
+
+}
+
+.avatar-pre-img3{
+  width: 64px;
+  height: 64px;
+  border-radius:64px;
+
+}
+
+.ava-pre-img{
+  width: 180px;
+  height: 180px;
+  border-radius:180px;
+  position: relative;
+  top: -5rem;
+  left: 5vh;
+}
+
+.img-create{
+  position: absolute;
+  left: 80rem;
+  top:-145px;
+  z-index: -1;
+  right: 0;
+  max-width: 40rem;
+}
+
+.bio-adap-create{
+    width: 61.6%;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .avatar-preview {
+    margin-top: 10px;
+    border-radius: 50%;
+  }

@@ -22,7 +22,7 @@
 
     data() {
       return {
-        userToken: localStorage.getItem('token') // Использование хука data для userToken
+        userToken: localStorage.getItem('token')
       };
     },
 
