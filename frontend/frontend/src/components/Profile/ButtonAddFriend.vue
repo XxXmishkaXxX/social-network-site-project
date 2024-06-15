@@ -96,7 +96,7 @@
       }
     }, 
     created() {
-        this.userProfileId = this.$route.params.UserID;
+        this.userProfileId = this.userId || this.$route.params.UserID;
         this.checkFriendStatus();
     }
     };

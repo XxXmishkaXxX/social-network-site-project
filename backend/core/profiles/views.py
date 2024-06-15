@@ -10,7 +10,7 @@ from .models import UserProfile
 from django.shortcuts import get_object_or_404
 from rest_framework.parsers import MultiPartParser
 from django.core.exceptions import ObjectDoesNotExist
-from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework import generics
 
 
 
@@ -75,6 +75,22 @@ class UserProfileEditAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserProfileSearchView(generics.ListAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = [TokenAuthentication]
+
+    def get_queryset(self):
+        queryset = UserProfile.objects.all()
+        search_query = self.request.query_params.get('search', None)
+        print(search_query)
+        if search_query:
+            queryset = queryset.filter(full_name__icontains=search_query)
+        return queryset
+
 
 
 class GetCountriesView(APIView):

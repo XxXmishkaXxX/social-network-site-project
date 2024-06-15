@@ -8,6 +8,7 @@
                     <button class="btn btn-outline-primary" @click="showFriendsList">Все друзья</button>
                 </div>
                 <div class="ml-auto">
+                    <button class="btn btn-outline-primary me-2" @click="showSearchPeopleForm">Поиск людей</button>
                     <button class="btn btn-outline-primary me-2" @click="showIncomingUsersList">Входящие</button>
                     <button class="btn btn-outline-primary" @click="showOutgoingUsersList">Исходящие</button>
                 </div>
@@ -15,6 +16,7 @@
             <FriendsList v-if="currentComponent === 'FriendsList'" />
             <IncomingUsersList v-if="currentComponent === 'IncomingUsersList'" />
             <OutgoingUsersList v-if="currentComponent === 'OutgoingUsersList'" />
+            <SearchPeople v-if="currentComponent === 'SearchPeople'" />
         </div>
         <Footer />
     </div>
@@ -26,6 +28,7 @@ import Footer from '../components/base/Footer.vue'
 import FriendsList from '../components/friends/FriendsList.vue'
 import OutgoingUsersList from '../components/friends/OutgoingUsersList.vue'
 import IncomingUsersList from '../components/friends/IncomingUsersList.vue'
+import SearchPeople from '../components/friends/SearchPeople.vue'
 
 export default {
     components: { 
@@ -33,7 +36,8 @@ export default {
         Footer,
         FriendsList,
         OutgoingUsersList,
-        IncomingUsersList
+        IncomingUsersList,
+        SearchPeople
     },
     data() {
         return {
@@ -49,8 +53,10 @@ export default {
             },
         showOutgoingUsersList() {
                 this.currentComponent = 'OutgoingUsersList';
-                console.log("!")
-            }
+            },
+        showSearchPeopleForm() {
+            this.currentComponent = 'SearchPeople';
+        }
         }
 }
 </script>
