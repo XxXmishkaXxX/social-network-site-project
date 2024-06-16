@@ -35,7 +35,7 @@ export default {
         let data = JSON.parse(event.data);
         if (data.type && !data.read) {
           this.unreadCount++;
-          this.notifications.push(data);
+          this.notifications.unshift(data); 
         }
       };
       

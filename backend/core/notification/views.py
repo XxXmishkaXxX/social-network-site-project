@@ -14,7 +14,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return self.queryset.filter(recipient=self.request.user.userprofile)
+        return self.queryset.filter(recipient=self.request.user.userprofile).order_by('-created_at')
     
 
 

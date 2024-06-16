@@ -16,12 +16,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
     avatar = serializers.ImageField(required=False)
     country = serializers.CharField(required=False)
     city = serializers.CharField(required=False)
-
+    
     class Meta:
         model = UserProfile
         fields = '__all__'
-
-    
+        
     def validate_country(self, country):
         
         if country == 'null':
@@ -109,6 +108,43 @@ class UserProfileShortData(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['pk', 'full_name', 'avatar', ]
+
+
+class UserProfileWithFriendStatusSerializer(serializers.ModelSerializer):
+    
+    is_friend = serializers.SerializerMethodField()
+    is_following = serializers.SerializerMethodField()
+
+    class Meta:
+        model = UserProfile
+        fields = '__all__'
+
+    def get_is_friend(self, obj):
+        profile_owner = obj.user
+        request_user = self.context['request'].user
+        if request_user.is_anonymous:
+            return {"is_friend": False, "is_request_sent": False}
+            
+        # Check if the users are friends
+        is_friend = Friend.objects.filter(user=request_user, friend=profile_owner).exists()
+            
+        # Check if there is a friend request
+        is_request_sent_to_user = FriendRequest.objects.filter(from_user=request_user, to_user=profile_owner, is_accepted=False).exists()
+        
+        is_request_sent_from_user = FriendRequest.objects.filter(from_user=profile_owner, to_user=request_user, is_accepted=False).exists()
+            
+        return {"is_friend": is_friend, "is_request_sent_to_user": is_request_sent_to_user, 'is_request_sent_from_user': is_request_sent_from_user}
+    
+    def get_is_following(self, obj):
+        profile_owner = obj.user
+        request_user = self.context['request'].user
+        if request_user.is_anonymous:
+            return False
+        
+        # Check if the request user is following the profile owner
+        is_following = profile_owner.followers.filter(follower=request_user).exists()
+        
+        return is_following
 
 
 

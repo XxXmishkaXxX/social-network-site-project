@@ -1,22 +1,24 @@
 <template>
     <div class="d-flex flex-column min-vh-100">
         <Navbar />
-
-        <div class="container mt-4 flex-grow-1">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                    <button class="btn btn-outline-primary" @click="showFriendsList">Все друзья</button>
+        <div class="main-container d-flex flex-row flex-grow-1">
+            <SideBar />
+            <div class="container-friends flex-grow-1">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <button class="btn btn-outline-primary" @click="showFriendsList">Все друзья</button>
+                    </div>
+                    <div class="ml-auto">
+                        <button class="btn btn-outline-primary me-2" @click="showSearchPeopleForm">Поиск людей</button>
+                        <button class="btn btn-outline-primary me-2" @click="showIncomingUsersList">Входящие</button>
+                        <button class="btn btn-outline-primary" @click="showOutgoingUsersList">Исходящие</button>
+                    </div>
                 </div>
-                <div class="ml-auto">
-                    <button class="btn btn-outline-primary me-2" @click="showSearchPeopleForm">Поиск людей</button>
-                    <button class="btn btn-outline-primary me-2" @click="showIncomingUsersList">Входящие</button>
-                    <button class="btn btn-outline-primary" @click="showOutgoingUsersList">Исходящие</button>
-                </div>
+                <FriendsList v-if="currentComponent === 'FriendsList'" />
+                <IncomingUsersList v-if="currentComponent === 'IncomingUsersList'" />
+                <OutgoingUsersList v-if="currentComponent === 'OutgoingUsersList'" />
+                <SearchPeople v-if="currentComponent === 'SearchPeople'" />
             </div>
-            <FriendsList v-if="currentComponent === 'FriendsList'" />
-            <IncomingUsersList v-if="currentComponent === 'IncomingUsersList'" />
-            <OutgoingUsersList v-if="currentComponent === 'OutgoingUsersList'" />
-            <SearchPeople v-if="currentComponent === 'SearchPeople'" />
         </div>
         <Footer />
     </div>
@@ -29,6 +31,7 @@ import FriendsList from '../components/friends/FriendsList.vue'
 import OutgoingUsersList from '../components/friends/OutgoingUsersList.vue'
 import IncomingUsersList from '../components/friends/IncomingUsersList.vue'
 import SearchPeople from '../components/friends/SearchPeople.vue'
+import SideBar from '@/components/base/SideBar.vue'
 
 export default {
     components: { 
@@ -37,7 +40,8 @@ export default {
         FriendsList,
         OutgoingUsersList,
         IncomingUsersList,
-        SearchPeople
+        SearchPeople,
+        SideBar
     },
     data() {
         return {
@@ -66,11 +70,22 @@ export default {
 
 
 <style scoped>
-.container {
+.main-container {
+    margin: 10px 10px 200px 200px;
+    width: 80%;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.container-friends {
     background-color: #fff;
-    border-radius: 8px;
+    border-radius: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
+    width: 800px;
+    padding-bottom: 20px;
+    margin-left: 20px;
+    min-height: 500px; /* Задаем минимальную высоту контейнера */
+    max-height: 100%
 }
 
 .list-group-item {
@@ -101,5 +116,16 @@ export default {
 .friend-name {
     color: inherit;
     text-decoration:none;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+
+footer {
+    margin-top: auto; /* Закрепить футер внизу страницы */
 }
 </style>

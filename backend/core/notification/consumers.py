@@ -16,15 +16,9 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             )
             await self.accept()
 
-    async def send_like_notification(self, event):
+    async def send_notification(self, event):
         notification_data = event["notification"]  
         await self.send(text_data=json.dumps(notification_data)) 
 
-    async def send_comment_notification(self, event):
-        notification_data = event["notification"]  
-        await self.send(text_data=json.dumps(notification_data))
 
-    async def send_friend_request_notification(self, event):
-        notification_data = event["notification"] 
-        await self.send(text_data=json.dumps(notification_data))
 
