@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
-from .serializers import UserProfileSerializer, UserProfileShortData
+from .serializers import UserProfileSerializer, UserProfileShortData, UserProfileWithFriendStatusSerializer
 from cities_light.models import Country, City
 from .serializers import CountrySerializer, CitySerializer
 from .models import UserProfile
@@ -32,10 +32,12 @@ class UserProfileCreate(APIView):
 
 class UserProfileWallView(APIView):
 
+    authentication_classes = [TokenAuthentication]
+
     def get(self, request, pk):
         try:
             user_profile = UserProfile.objects.get(user=pk)
-            serializer = UserProfileSerializer(user_profile,  context={'request': request})
+            serializer = UserProfileWithFriendStatusSerializer(user_profile,  context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         except ObjectDoesNotExist:
             return Response({"error": "Профиль пользователя не найден"}, status=status.HTTP_404_NOT_FOUND)
@@ -79,14 +81,13 @@ class UserProfileEditAPIView(APIView):
 
 class UserProfileSearchView(generics.ListAPIView):
     queryset = UserProfile.objects.all()
-    serializer_class = UserProfileSerializer
+    serializer_class = UserProfileWithFriendStatusSerializer
     permission_classes = (IsAuthenticated,)
     authentication_classes = [TokenAuthentication]
 
     def get_queryset(self):
         queryset = UserProfile.objects.all()
         search_query = self.request.query_params.get('search', None)
-        print(search_query)
         if search_query:
             queryset = queryset.filter(full_name__icontains=search_query)
         return queryset

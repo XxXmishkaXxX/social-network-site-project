@@ -8,7 +8,7 @@ from profiles.models import UserProfile
 from profiles.serializers import UserProfileSerializer
 from .models import Post, LikePostModel
 from .serializers import CommentSerializer, PostSerializer
-from notification.utils import send_like_notification, send_comment_notification
+from notification.utils import send_notification
 
 
 
@@ -79,9 +79,11 @@ class LikeAPIView(APIView):
             post.save()
 
             if request.user.userprofile != post.author:
-                send_like_notification(
+                send_notification(
                     sender=request.user.userprofile,
                     recipient= post.author,
+                    type='like',
+                    message='Поставил лайк вашей работе'
                     )
 
             return Response({'detail': 'Лайк создан', 'likes_count': post.likes_count}, status=status.HTTP_201_CREATED)
@@ -110,9 +112,11 @@ class CommentCreateAPIView(APIView):
                 
 
                 if request.user.userprofile != post.author:
-                    send_comment_notification(
+                    send_notification(
                         sender=request.user.userprofile,
                         recipient= post.author,
+                        type='comment',
+                        message='Прокомментировал вашу работу'
                         )
                 
                 return Response({'comment': comment_serializer.data, 'user_profile':user_profile.data}, status=status.HTTP_201_CREATED)

@@ -11,7 +11,7 @@
                     </div>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-danger" @click="cancelFriendRequest(user.id)">Отменить запрос</button>
+                    <button type="button" class="btn btn-danger" @click="cancelFriendRequest(user.to_user)">Отменить запрос</button>
                 </div>
             </li>
         </ul>
@@ -42,20 +42,20 @@ export default {
                     }
                 });
                 this.users = response.data;
-                console.log(this.users)
             } catch (error) {
                 console.error('Error fetching friends:', error);
             }
         },
-        async cancelFriendRequest(requestId) {
+        async cancelFriendRequest(to_user_id) {
             try {
-                await axios.delete(`${API_BASE_URL}/relations/cancel-friend-request/${requestId}/`, {
+                await axios.delete(`${API_BASE_URL}/relations/cancel-friend-request/`, {
                     headers: {
                         'Authorization': `token ${localStorage.getItem('token')}`
-                    }
+                    },
+                    params: {to_user: to_user_id}
                 });
 
-                this.users = this.users.filter(user => user.id !== requestId);
+                this.users = this.users.filter(user => user.to_user !== to_user_id);
             } catch (error) {
                 console.error('Error canceling friend request:', error);
             }

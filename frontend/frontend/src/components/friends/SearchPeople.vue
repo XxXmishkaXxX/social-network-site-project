@@ -13,7 +13,16 @@
                             </h5>
                         </div>
                     </div>
-                    <ButtonAddFriend v-if="isDifferentUser(user.user)" :userId="user.user"/>
+                    <ButtonAddFriend
+                    v-if="user.user && user.is_friend !== undefined"
+                    :userProfileId="user.user"
+                    :isFriend="user.is_friend.is_friend"
+                    :isRequestSentToUser="user.is_friend.is_request_sent_to_user"
+                    :isRequestSentFromUser="user.is_friend.is_request_sent_from_user"
+                    @update:isFriend="(newValue) => handleUpdateIsFriend(newValue, user)"
+                    @update:isRequestSentToUser="(newValue) => handleUpdateIsRequestSentToUser(newValue, user)"
+                    @update:isRequestSentFromUser="(newValue) => handleUpdateIsRequestSentFromUser(newValue, user)"
+                  />
                 </li>
           </ul>
           <p v-else class="text-center mt-3">Нет профилей</p>
@@ -42,6 +51,18 @@
     },
 
     methods: {
+    
+      handleUpdateIsFriend(newValue, user) {
+      user.is_friend.is_friend = newValue;
+      },
+      handleUpdateIsRequestSentToUser(newValue, user) {
+        user.is_friend.is_request_sent_to_user = newValue;
+      },
+
+      handleUpdateIsRequestSentFromUser(newValue, user){
+       user.is_friend.is_request_sent_from_user = newValue;
+       user.is_friend.is_friend = true
+      },
     async fetchUserProfiles() {
         if (this.searchQuery.trim().length <= 3) {
             this.userProfiles = [];
@@ -58,7 +79,6 @@
       try {
         const response = await axios.get(`${API_BASE_URL}/profile/search/`, config);
         this.userProfiles = response.data;
-        console.log(this.userProfiles);
       } catch (error) {
         console.error('Error fetching user profiles', error);
       }

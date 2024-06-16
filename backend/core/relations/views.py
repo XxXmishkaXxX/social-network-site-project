@@ -8,8 +8,12 @@ from rest_framework import status
 from copy import deepcopy
 from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
-from notification.utils import send_friend_request_notification
+from notification.utils import send_notification
 from profiles.models import UserProfile
+from .models import Follower
+from .serializers import FollowerSerializer
+from django.shortcuts import get_object_or_404
+
 
 
 User = get_user_model()
@@ -38,14 +42,13 @@ class FriendRequestCreateAPIView(generics.CreateAPIView):
             serializer.is_valid(raise_exception=True)
             serializer.save()
 
-
-            friend_request_id = serializer.instance.id
             to_user_profile = UserProfile.objects.get(pk=data['to_user'])
 
-            send_friend_request_notification(
+            send_notification(
                 sender=request.user.userprofile,
                 recipient=to_user_profile, 
-                request_id= friend_request_id)
+                type='friend_request',
+                message='Хочет с вами дружить')
 
             return Response(status=status.HTTP_201_CREATED)
         except Exception as e:
@@ -72,9 +75,6 @@ class ReceivedFriendRequestsView(generics.ListAPIView):
         return FriendRequest.objects.filter(to_user=user)
 
 
-
-
-
 class AcceptFriendRequestAPIView(generics.UpdateAPIView):
     queryset = FriendRequest.objects.all()
     serializer_class = FriendRequestSerializer
@@ -83,61 +83,97 @@ class AcceptFriendRequestAPIView(generics.UpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         try:
-            instance = self.get_object()
-            
+            from_user_id = request.query_params.get('from_user')
+            to_user_id = request.user.id
 
-            if not instance.is_accepted and instance.to_user == request.user:
+            friend_request = FriendRequest.objects.get(from_user=from_user_id, to_user=to_user_id)
+
+            if not friend_request.is_accepted and friend_request.to_user == request.user:
                 # Устанавливаем статус запроса на принятый
-                instance.is_accepted = True
-                instance.delete()
+                friend_request.is_accepted = True
+                friend_request.delete()
+
                 # Создаем новую запись друга
-                Friend.objects.create(user=request.user, friend=instance.from_user)
-                Friend.objects.create(user=instance.from_user, friend=request.user)
+                Friend.objects.create(user=request.user, friend=friend_request.from_user)
+                Friend.objects.create(user=friend_request.from_user, friend=request.user)
+                
+                send_notification(
+                    sender=request.user.userprofile,
+                    recipient=UserProfile.objects.get(pk=from_user_id), 
+                    type='friend_request',
+                    message='Принял(а) ваш запрос в друзья')
                 
                 return Response({'detail': 'Friend request accepted'}, status=status.HTTP_200_OK)
             else:
                 return Response({'detail': 'This friend request has already been accepted or rejected'}, status=status.HTTP_400_BAD_REQUEST)
+        except FriendRequest.DoesNotExist:
+            return Response({'detail': 'Friend request not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             print(e)
             return Response({'detail': 'An error occurred while accepting the friend request'}, status=status.HTTP_400_BAD_REQUEST)
-        
 
-class RejectFriendRequestAPIView(generics.DestroyAPIView):
-    queryset = FriendRequest.objects.all()
-    serializer_class = FriendRequestSerializer
+class RejectFriendRequestAPIView(generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
-    def destroy(self, request, *args, **kwargs):
+    def delete(self, request, *args, **kwargs):
         try:
-            instance = self.get_object()
-            # Проверяем, что запрос находится в состоянии ожидания
-            if not instance.is_accepted:
-                instance.delete()
+            if request.query_params.get('to_user'): 
+                from_user_id = request.user.id
+                to_user_id = request.query_params.get('to_user')
+            else:
+                to_user_id = request.user.id
+                from_user_id = request.query_params.get('from_user')
+                
+            if not to_user_id:
+                return Response({'detail': 'To user ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+            friend_request = FriendRequest.objects.get(from_user=from_user_id, to_user=to_user_id)
+
+            if not friend_request.is_accepted:
+                friend_request.delete()
                 return Response({'detail': 'Friend request rejected'}, status=status.HTTP_200_OK)
             else:
                 return Response({'detail': 'This friend request has already been accepted or rejected'}, status=status.HTTP_400_BAD_REQUEST)
+        except FriendRequest.DoesNotExist:
+            return Response({'detail': 'Friend request not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return Response({'detail': 'An error occurred while rejecting the friend request'}, status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response({'detail': f'An error occurred while rejecting the friend request: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)    
 
-
-class CheckFriendStatus(APIView):
-    
+class FollowUserView(generics.CreateAPIView):
+    queryset = Follower.objects.all()
+    serializer_class = FollowerSerializer
     authentication_classes = [TokenAuthentication]
+    permission_classes = (IsAuthenticated,)
 
-    def get(self, request, user_id):
-        try:
-            profile_owner = User.objects.get(id=user_id)
-            request_user = request.user
-            if request_user.is_anonymous:
-                return Response({"is_friend": False, "is_request_sent": False}, status=status.HTTP_200_OK)
-            
-            # Check if the users are friends
-            is_friend = Friend.objects.filter(user=request_user, friend=profile_owner).exists() or Friend.objects.filter(user=profile_owner, friend=request_user).exists()
-            
-            # Check if there is a friend request
-            is_request_sent = FriendRequest.objects.filter(from_user=request_user, to_user=profile_owner, is_accepted=False).exists()
-            
-            return Response({"is_friend": is_friend, "is_request_sent": is_request_sent}, status=status.HTTP_200_OK)
+    def post(self, request, *args, **kwargs):
+        user_to_follow_id = request.data.get('user_id')
         
+        try:
+            user_to_follow = get_object_or_404(User, id=user_to_follow_id)
         except User.DoesNotExist:
-            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        follower, created = Follower.objects.get_or_create(user=user_to_follow, follower=request.user)
+        
+        if created:
+            return Response({"message": "Successfully followed the user."}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"message": "You are already following this user."}, status=status.HTTP_200_OK)
+
+class UnfollowUserView(generics.DestroyAPIView):
+    queryset = Follower.objects.all()
+    serializer_class = FollowerSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        user_to_unfollow_id = request.data.get('user_id')
+        user_to_unfollow = User.objects.get(id=user_to_unfollow_id)
+
+        try:
+            follower = Follower.objects.get(user=user_to_unfollow, follower=request.user)
+            follower.delete()
+            return Response({"message": "Successfully unfollowed the user."}, status=status.HTTP_204_NO_CONTENT)
+        except Follower.DoesNotExist:
+            return Response({"message": "You are not following this user."}, status=status.HTTP_400_BAD_REQUEST)

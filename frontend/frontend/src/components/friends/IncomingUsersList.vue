@@ -11,8 +11,8 @@
                     </div>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-success me-2" @click="acceptFriendRequest(user.id)">Добавить</button>
-                    <button type="button" class="btn btn-danger" @click="cancelFriendRequest(user.id)">Отклонить</button>
+                    <button type="button" class="btn btn-success me-2" @click="acceptFriendRequest(user.from_user)">Добавить</button>
+                    <button type="button" class="btn btn-danger" @click="cancelFriendRequest(user.from_user)">Отклонить</button>
                 </div>
             </li>
         </ul>
@@ -43,33 +43,38 @@ export default {
                     }
                 });
                 this.users = response.data;
-                console.log(this.users)
             } catch (error) {
                 console.error('Error fetching friends:', error);
             }
         },
-        async acceptFriendRequest(requestId) {
+        async acceptFriendRequest(userId) {
             try {
-                await axios.put(`${API_BASE_URL}/relations/accept-friend-request/${requestId}/`, null, {
+                await axios.put(`${API_BASE_URL}/relations/accept-friend-request/`, null, {
                     headers: {
                         'Authorization': `token ${localStorage.getItem('token')}`
+                    },
+                    params:{
+                        from_user: userId
                     }
                 });
 
-                this.users = this.users.filter(user => user.id !== requestId);
+                this.users = this.users.filter(user => user.from_user !== userId);
             } catch (error) {
                 console.error('Error accepting friend request:', error);
             }
         },
-        async cancelFriendRequest(requestId) {
+        async cancelFriendRequest(userId) {
             try {
-                await axios.delete(`${API_BASE_URL}/relations/cancel-friend-request/${requestId}/`, {
+                await axios.delete(`${API_BASE_URL}/relations/cancel-friend-request/`, {
                     headers: {
                         'Authorization': `token ${localStorage.getItem('token')}`
+                    },
+                    params: {
+                        from_user: userId
                     }
                 });
 
-                this.users = this.users.filter(user => user.id !== requestId);
+                this.users = this.users.filter(user => user.from_user !== userId);
             } catch (error) {
                 console.error('Error canceling friend request:', error);
             }

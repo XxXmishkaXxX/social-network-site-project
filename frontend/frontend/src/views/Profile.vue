@@ -1,6 +1,6 @@
 <template>
   <div>
-  <Navbar />
+    <Navbar />
     <div class="main-container d-flex flex-row">
       <SideBar />
       <div class="profile">
@@ -43,8 +43,21 @@
             </router-link>
             <UploadPostModal />
           </div>
-          <div v-else>
-            <ButtonAddFriend />
+          <div v-if="userProfile.user != localStorage.getItem('UserID')" class="d-flex align-items-center">
+            <ButtonAddFriend
+              v-if="userProfile.user && userProfile.is_friend !== undefined"
+              :userProfileId="userProfile.user"
+              :isFriend="userProfile.is_friend.is_friend"
+              :isRequestSentToUser="userProfile.is_friend.is_request_sent_to_user"
+              :isRequestSentFromUser="userProfile.is_friend.is_request_sent_from_user"
+              @update:isFriend="handleUpdateIsFriend"
+              @update:isRequestSentToUser="handleUpdateIsRequestSentToUser"
+              @update:isRequestSentFromUser="handleUpdateIsRequestSentFromUser"
+            />
+            <ButtonFollow  v-if="userProfile.user && userProfile.is_following !== undefined"
+              :userProfileId="userProfile.user" 
+              :isFollowing="userProfile.is_following" 
+              @update:isFollowing="handelUpdateFollowStatus" />
           </div>
         </div>
         <br>
@@ -63,7 +76,7 @@
                 </div>
               </div>
               <div class="d-flex align-items-center mt-3">
-                <LikeButton :postId="post.id " :liked="post.liked" :likesCount="post.likes_count" @update="fetchUsersPosts" />
+                <LikeButton :postId="post.id" :liked="post.liked" :likesCount="post.likes_count" @update="fetchUsersPosts" />
                 <DeletePostButton v-if="userProfile.user == localStorage.getItem('UserID')" :isUserPost="true" :post-id="post.id" @post-deleted="fetchUsersPosts" />
               </div>
               <hr>
@@ -82,22 +95,23 @@
         </div>
       </div>
     </div>
-  <Footer />
+    <Footer />
   </div>
 </template>
-<script>
 
+<script>
 import Navbar from '../components/base/Navbar.vue';
 import Footer from '../components/base/Footer.vue';
 import axios from 'axios';
 import UploadPostModal from '../components/Profile/UploadPostModal.vue';
 import CommentSection from '../components/Profile/CommentSection.vue';
-import DeletePostButton from '../components/Profile/DeletePostButton.vue'
+import DeletePostButton from '../components/Profile/DeletePostButton.vue';
 import LikeButton from '../components/Profile/LikeButton.vue';
-import ButtonAddFriend from '../components/Profile/ButtonAddFriend.vue'
+import ButtonAddFriend from '../components/Profile/ButtonAddFriend.vue';
 import { API_BASE_URL } from '../config';
 import SideBar from '../components/base/SideBar.vue';
-import { Modal } from 'bootstrap'
+import { Modal } from 'bootstrap';
+import ButtonFollow from '../components/Profile/ButtonFollow.vue';
 
 export default {
   components: {
@@ -108,19 +122,21 @@ export default {
     DeletePostButton,
     LikeButton,
     ButtonAddFriend,
-    SideBar
+    SideBar,
+    ButtonFollow
   },
-  data(){
+  data() {
     return {
       localStorage: window.localStorage,
-      showModalProfileInfo: false,
       userProfile: {
         country: { id: '', name: '' },
         city: {},
         avatar: '',
         sex: '',
         birth_date: '',
-        bio: ''
+        bio: '',
+        is_friend: '',
+        is_following: ''
       },
       posts: [],
       currentImage: null,
@@ -130,6 +146,22 @@ export default {
     this.fetchUserProfile();
   },
   methods: {
+
+    handleUpdateIsFriend(newValue) {
+      this.userProfile.is_friend.is_friend = newValue;
+    },
+    handleUpdateIsRequestSentToUser(newValue) {
+      this.userProfile.is_friend.is_request_sent_to_user = newValue;
+    },
+
+    handleUpdateIsRequestSentFromUser(newValue){
+      this.userProfile.is_friend.is_request_sent_from_user = newValue;
+      this.userProfile.is_friend.is_friend = true
+    },
+    
+    handelUpdateFollowStatus(newValue) {
+      this.userProfile.is_following = newValue
+    },
     openModalImg(image) {
       this.currentImage = image;
       const modal = new Modal(document.getElementById('imageModal'));
@@ -139,64 +171,64 @@ export default {
       const modal = new Modal(document.getElementById('imageModal'));
       modal.hide();
     },
-
     openModalUserInfo() {
       const modal = new Modal(document.getElementById('userInfoModal'))
       modal.show()
     },
-  
     closeModalUserInfo() {
       const modal = new Modal(document.getElementById('userInfoModal'))
       modal.hide()  
     },
-    
     fetchUserProfile() {
       const UserID = this.$route.params.UserID;
-      axios.get(`${API_BASE_URL}/profile/wall/${UserID}/`)
+
+      axios.get(`${API_BASE_URL}/profile/wall/${UserID}/`, {
+        headers: {
+          'Authorization': `token ${localStorage.getItem('token')}`
+        }
+      })
         .then(response => {
-        
           this.userProfile = response.data;
-          this.fetchUsersPosts()
+          console.log(this.userProfile)
+          this.fetchUsersPosts();
         })
         .catch(error => {
+          console.error('Error fetching user profile:', error);
           this.$router.push({ name: 'Home' });
         });
     },
-
-    fetchUsersPosts(){
+    fetchUsersPosts() {
       const UserID = this.$route.params.UserID;
       axios.get(`${API_BASE_URL}/wall/posts/${UserID}/`, {
         headers: {
           'Authorization': `token ${localStorage.getItem('token')}`
-        }}
-      )
-      .then(response => {
-
-        this.posts = response.data.posts
+        }
       })
-
+      .then(response => {
+        this.posts = response.data.posts;
+      })
+      .catch(error => {
+        console.error('Error fetching user posts:', error);
+      });
     },
   }
 };
 </script>
 
-
 <style scoped>
- @import '../styles/profile/header-profile.css';
- @import '../styles/profile/content-profile.css';
-</style>
+@import '../styles/profile/header-profile.css';
+@import '../styles/profile/content-profile.css';
 
-<style scoped>
-.main-container{
-  margin: 10px 10px 200px 200px ;
+.main-container {
+  margin: 10px 10px 200px 200px;
   width: 80%;
-  flex-direction: column; 
+  flex-direction: column;
   align-items: flex-start;
 }
-.profile{
+
+.profile {
   margin-right: 350px;
   margin-left: 10px;
   width: 1100px;
 }
-
 </style>
