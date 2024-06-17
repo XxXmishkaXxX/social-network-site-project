@@ -38,6 +38,11 @@ const router = createRouter({
       path: '/friends/',
       name: 'Friends',
       component: () => import('../views/Friends.vue')
+    },
+    {
+      path: '/feed/',
+      name: 'Feed',
+      component: () => import('../views/Feed.vue')
     }
   ]
 })

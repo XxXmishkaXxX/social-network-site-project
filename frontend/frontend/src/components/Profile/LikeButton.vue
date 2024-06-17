@@ -10,6 +10,8 @@
   </template>
   
   <script>
+  import { API_BASE_URL } from '../../config';
+
   export default {
     props: {
       postId: null,
@@ -29,7 +31,7 @@
     },
     methods: {
       likePost() {
-        const response = fetch(`http://127.0.0.1:8000/api/wall/posts/like/${this.postId}/`, {
+        const response = fetch(`${ API_BASE_URL }/wall/posts/like/${this.postId}/`, {
           method: 'GET',
           headers: {
             'Authorization': `token ${localStorage.getItem('token')}`

@@ -6,9 +6,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from profiles.models import UserProfile
 from profiles.serializers import UserProfileSerializer
-from .models import Post, LikePostModel
-from .serializers import CommentSerializer, PostSerializer
+from .models import Post, LikePostModel, CommentPostModel
+from .serializers import CommentSerializer, PostSerializer, PostWithAuthorSerializer
 from notification.utils import send_notification
+from django.shortcuts import get_object_or_404
 
 
 
@@ -24,7 +25,7 @@ class PostAPIView(APIView):
         except UserProfile.DoesNotExist:
             return Response({'detail': 'Пользователь не найден'}, status=status.HTTP_404_NOT_FOUND)
 
-        posts = Post.objects.filter(author=user_profile)
+        posts = Post.objects.filter(author=user_profile).order_by('-created_at')
         serializer = PostSerializer(posts, many=True, context={'request': request})
         return Response({'posts': serializer.data}, status=status.HTTP_200_OK)
 
@@ -128,3 +129,36 @@ class CommentCreateAPIView(APIView):
         except Exception as e:
             return Response({'detail': 'Произошла ошибка при добавлении комментария'},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class CommentsByPostAPIView(APIView):
+    
+    def get(self, request, post_id, *args, **kwargs):
+        try:
+            # Получаем все комментарии для указанного поста
+            comments = CommentPostModel.objects.filter(post_id=post_id)
+            serializer = CommentSerializer(comments, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        except CommentPostModel.DoesNotExist:
+            return Response({'detail': 'Комментарии для указанного поста не найдены'}, status=status.HTTP_404_NOT_FOUND)
+        
+        except Exception as e:
+            return Response({'detail': 'Произошла ошибка при получении комментариев'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class PostByIdAPIView(APIView):
+    
+    def get(self, request, post_id, *args, **kwargs):
+        try:
+            # Get the single instance of Post using get_object_or_404
+            post = get_object_or_404(Post, id=post_id)
+            
+            # Serialize the single instance, not the queryset
+            serializer = PostWithAuthorSerializer(post)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        except Post.DoesNotExist:
+            return Response({'detail': 'Post с указанным id не найден'}, status=status.HTTP_404_NOT_FOUND)
+        
+        except Exception as e:
+            return Response({'detail': 'Произошла ошибка при получении поста'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

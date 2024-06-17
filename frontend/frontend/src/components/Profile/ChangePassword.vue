@@ -31,6 +31,7 @@
 <script>
     import { toast } from 'vue3-toastify';
   import 'vue3-toastify/dist/index.css';
+  import { API_BASE_URL } from '../../config';
 
 export default {
     props: ['currentSection'],
@@ -62,7 +63,7 @@ export default {
                 formData.append('new_password1', this.newPassword1);
                 formData.append('new_password2', this.newPassword2);
 
-                const response = await fetch(`http://127.0.0.1:8000/api/users/change-password/`, {
+                const response = await fetch(`${ API_BASE_URL }/users/change-password/`, {
                     method: 'POST',
                     headers: {
                         'Authorization': 'token ' + localStorage.getItem('token')

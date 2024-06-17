@@ -76,11 +76,11 @@
                 </div>
               </div>
               <div class="d-flex align-items-center mt-3">
-                <LikeButton :postId="post.id" :liked="post.liked" :likesCount="post.likes_count" @update="fetchUsersPosts" />
+                <LikeButton :postId="post.id" :liked="post.liked" :likesCount="post.likes_count" @update="fetchPostById(post.id)" />
                 <DeletePostButton v-if="userProfile.user == localStorage.getItem('UserID')" :isUserPost="true" :post-id="post.id" @post-deleted="fetchUsersPosts" />
               </div>
               <hr>
-              <CommentSection :post="post" @comment-added="fetchUsersPosts" />
+              <CommentSection :post="post" @comment-added="fetchPostById(post.id)" />
             </div>
           </div>
           <!-- Modal -->
@@ -189,7 +189,6 @@ export default {
       })
         .then(response => {
           this.userProfile = response.data;
-          console.log(this.userProfile)
           this.fetchUsersPosts();
         })
         .catch(error => {
@@ -210,6 +209,18 @@ export default {
       .catch(error => {
         console.error('Error fetching user posts:', error);
       });
+    },
+    async fetchPostById(postId){
+      const response = await axios.get(`${API_BASE_URL}/wall/post/${postId}/`, {
+          headers: {
+            Authorization: `token ${localStorage.getItem('token')}`
+          }
+        });
+        const post = response.data
+        const postIndex = this.posts.findIndex(post => post.id === postId);
+        if (postIndex !== -1) {
+          this.posts[postIndex] = post
+        }
     },
   }
 };
