@@ -43,6 +43,7 @@ export default{
                     }
                 });
                 this.friends = response.data;
+                console.log(this.friends)
             } catch (error) {
                 console.error('Error fetching friends:', error);
             }

@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import { API_BASE_URL } from '../../config';
+
 export default {
   data() {
     return {
@@ -45,7 +47,7 @@ export default {
       }
 
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/wall/posts/create/', {
+        const response = await fetch(`${ API_BASE_URL }/wall/posts/create/`, {
           method: 'POST',
           headers: {
             'Authorization': `Token ${localStorage.getItem('token')}`

@@ -7,6 +7,8 @@
   </template>
   
   <script>
+  import { API_BASE_URL } from '../../config';
+
   export default {
     props: {
       isUserPost: Boolean,
@@ -14,7 +16,7 @@
     },
     methods: {
       deletePost() {
-        fetch(`http://127.0.0.1:8000/api/wall/posts/${this.postId}/`, {
+        fetch(`${ API_BASE_URL }/wall/posts/${this.postId}/`, {
           method: 'DELETE',
           headers: {
             'Authorization': `token ${localStorage.getItem('token')}`

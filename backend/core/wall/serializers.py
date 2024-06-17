@@ -1,5 +1,5 @@
 from rest_framework import serializers
-
+from profiles.serializers import UserProfileShortData
 from .models import Post, CommentPostModel, ImagePost
 
 
@@ -56,3 +56,10 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ['id', 'content', 'created_at', 'author', 'comment_for_post', 'images', 'likes_count', 'liked']
+
+
+class PostWithAuthorSerializer(PostSerializer):
+    author_profile = UserProfileShortData(source='author')
+
+    class Meta(PostSerializer.Meta):
+        fields = PostSerializer.Meta.fields + ['author_profile']

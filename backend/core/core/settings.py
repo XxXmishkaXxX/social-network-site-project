@@ -32,7 +32,8 @@ INSTALLED_APPS = [
     'profiles.apps.ProfilesConfig',
     'wall.apps.WallConfig',
     'relations.apps.RelationsConfig',
-    'notification.apps.NotificationConfig'
+    'notification.apps.NotificationConfig',
+    'feed.apps.FeedConfig'
 ]
 
 MIDDLEWARE = [
@@ -128,6 +129,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
 }
 
 JWT_AUTH_COOKIE = 'user-auth'
