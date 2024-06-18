@@ -8,9 +8,9 @@ import re
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     full_name = serializers.CharField()
+    sex = serializers.ChoiceField(choices=UserProfile.SEX_CHOICES)
     birth_date = serializers.DateField(format="%Y-%m-%d")
     bio = serializers.CharField(required=False)
     avatar = serializers.ImageField(required=False)
@@ -19,8 +19,17 @@ class UserProfileSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = UserProfile
-        fields = '__all__'
-        
+        fields = [
+            'user',
+            'full_name',
+            'bio',
+            'sex',
+            'country',
+            'city',
+            'birth_date',
+            'avatar',
+        ]
+
     def validate_country(self, country):
         
         if country == 'null':
@@ -93,6 +102,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     
     def to_representation(self, instance):
         data = super().to_representation(instance)
+        
         data['country'] = {
             'id': instance.country.id,
             'name': instance.country.name
@@ -110,14 +120,14 @@ class UserProfileShortData(serializers.ModelSerializer):
         fields = ['pk', 'full_name', 'avatar', ]
 
 
-class UserProfileWithFriendStatusSerializer(serializers.ModelSerializer):
+class UserProfileWithFriendStatusSerializer(UserProfileSerializer):
     
     is_friend = serializers.SerializerMethodField()
     is_following = serializers.SerializerMethodField()
 
     class Meta:
         model = UserProfile
-        fields = '__all__'
+        fields = UserProfileSerializer.Meta.fields + ['is_friend', 'is_following']
 
     def get_is_friend(self, obj):
         profile_owner = obj.user

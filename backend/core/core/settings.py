@@ -171,8 +171,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CITIES_LIGHT_TRANSLATION_LANGUAGES = ['ru', 'kz', 'en']
-CITIES_LIGHT_INCLUDE_COUNTRIES = ['RU', 'KZ', 'US']
+CITIES_LIGHT_TRANSLATION_LANGUAGES = ['ru', 'kz']
+CITIES_LIGHT_INCLUDE_COUNTRIES = ['RU', 'KZ']
 
 ALLOWED_HOSTS = ['backend', 'localhost', '127.0.0.1']
 

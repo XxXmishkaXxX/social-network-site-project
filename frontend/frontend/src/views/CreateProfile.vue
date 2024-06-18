@@ -186,7 +186,14 @@ export default {
     nextStep() {
       if (this.step === 1 && (!this.userData.firstName || !this.userData.lastName)) {
         this.showErrorMessage('Пожалуйста, введите имя и фамилию.');
-        return;
+        return;}
+      
+      else if (this.userData.firstName.length < 2 || this.userData.lastName.length < 2) {
+        this.showErrorMessage('Имя или фамилия должны быть длиннее одного символа');
+          return;
+      } else if (/[^a-zA-Zа-яА-ЯёЁ]/.test(this.userData.firstName) || /[^a-zA-Zа-яА-ЯёЁ]/.test(this.userData.lastName)) {
+          this.showErrorMessage('Имя и фамилия не должны содержать спецсимволы и цифры');
+          return;
       } else if (this.step === 2 && (!this.userData2.date)) {
         this.showErrorMessage('Пожалуйста, выберете дату рождения');
         return;

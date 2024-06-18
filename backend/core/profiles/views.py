@@ -26,7 +26,7 @@ class UserProfileCreate(APIView):
             serializer.validated_data['user'] = request.user
             serializer.save()
             return Response({'status': True}, status=status.HTTP_201_CREATED)
-        
+        print(serializer.errors)
         return Response(serializer.errors)
     
 
@@ -76,6 +76,7 @@ class UserProfileEditAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
+            print(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

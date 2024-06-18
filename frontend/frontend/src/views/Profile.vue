@@ -189,6 +189,7 @@ export default {
       })
         .then(response => {
           this.userProfile = response.data;
+          console.log(response.data)
           this.fetchUsersPosts();
         })
         .catch(error => {

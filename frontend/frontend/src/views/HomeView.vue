@@ -19,7 +19,7 @@
       <!-- масло -->
                 <div class="block-center d-flex justify-content-center align-items-top ">
                   <br><br><br><h1 class="chto-takoe">
-                    Что такое Yfpdfybt?</h1>
+                    Что такое TellYou?</h1>
                 </div>
 
       <!-- блок с 123 -->

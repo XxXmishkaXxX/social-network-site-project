@@ -6,9 +6,9 @@
       <SideBar />
       <div class="content-container">
         <div class="header-buttons d-flex justify-content-between align-items-center mb-3">
-          <button class="btn btn-outline-primary" @click="fetchAllPosts">Все посты</button>
+          <button class="btn btn-outline-primary" @click="fetchAllPosts">Все</button>
           <div class="ml-auto">
-            <button class="btn btn-outline-primary me-2" @click="fetchFriendsPosts">Все друзья</button>
+            <button class="btn btn-outline-primary me-2" @click="fetchFriendsPosts">Друзья</button>
             <button class="btn btn-outline-primary" @click="fetchSubscriptionPosts">Подписки</button>
           </div>
         </div>
@@ -102,12 +102,15 @@ export default {
           }
         });
         const newPosts = response.data.results;
+        console.log(newPosts)
 
         if (newPosts.length > 0) {
           this.posts = [...this.posts, ...newPosts];
           this.currentPage++;
           $state.loaded();
         } 
+        $state.loaded();
+        
       } catch (error) {
         
       }

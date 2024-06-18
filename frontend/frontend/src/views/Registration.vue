@@ -50,12 +50,6 @@ export default {
       showCheckEmailButton: false
     };
   },
-  mounted() {
-    const storedButtonState = localStorage.getItem('showCheckEmailButton');
-    if (storedButtonState) {
-      this.showCheckEmailButton = JSON.parse(storedButtonState);
-    }
-  },
   mixins: [toastMixin],
   methods: {
     async registerUser() {
